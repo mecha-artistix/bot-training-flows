@@ -1,7 +1,5 @@
-import { useCallback, useState, useRef, useEffect } from "react";
-import { useNodeId } from "reactflow";
+import { useState, useRef, useEffect } from "react";
 import HandlePair from "./HandlePair";
-import { useNodesContext } from "../context/NodesContext";
 
 export default function ResponseNode({ data }) {
   const [label, setLabel] = useState(data.label || "");
@@ -21,7 +19,6 @@ export default function ResponseNode({ data }) {
       newTextAreas.splice(index + 1, 0, "");
       return newTextAreas;
     });
-    console.log("added");
   };
   const removeTextArea = (index) => {
     setTextAreas((prev) => {
@@ -29,7 +26,6 @@ export default function ResponseNode({ data }) {
       newTextAreas.splice(index, 1);
       return newTextAreas;
     });
-    console.log("removed");
   };
   const handleDrop = (event) => {
     event.preventDefault();
@@ -56,7 +52,6 @@ export default function ResponseNode({ data }) {
 
       {textAreas.map((value, index) => (
         <div key={index} className="mt-2 relative w-full">
-          {console.log(index, value)}
           <TextArea setTextAreas={setTextAreas} index={index} value={value} />
           <span className="absolute -top-1 right-2">
             <button onClick={() => addTextArea(index)}>+</button>

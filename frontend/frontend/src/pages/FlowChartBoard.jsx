@@ -13,7 +13,7 @@ function FlowChartBoard() {
       <ReactFlowProvider>
         <NodesProvider reactFlowRef={reactFlowRef}>
           <DrawingControlsPanel />
-          <div ref={reactFlowRef} style={style}>
+          <div ref={reactFlowRef} style={style} className="">
             <FlowBoard />
           </div>
         </NodesProvider>
