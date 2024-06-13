@@ -29,7 +29,6 @@ export const makeEdgeStyle = function (source) {
         arrowHead: { ...defaultProps.arrowHead, color: "red" },
       };
     default:
-      console.log("hi");
       return defaultProps;
   }
 };

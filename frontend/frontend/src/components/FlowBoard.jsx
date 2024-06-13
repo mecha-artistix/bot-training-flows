@@ -45,7 +45,7 @@ function FlowBoard() {
         y: event.clientY,
       });
       const newNode = {
-        id: `node-${nodes.length + 1}`,
+        id: `node-${nodes.length}`,
         type: "responsenode",
         position,
         data: {},
@@ -82,9 +82,45 @@ function FlowBoard() {
     connectingNodeId.current = nodeId;
   }, []);
 
+  const onConnectEnd = useCallback((event) => {
+    if (connectingNodeId.current) return;
+    console.log(connectingNodeId, event);
+
+    // const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
+    // // console.log(source);
+    // const targetIsPane = event.target.classList.contains("react-flow__pane");
+    // if (targetIsPane) {
+    //   // Handle creating a new node at the drop position
+    //   const position = reactFlowInstance.screenToFlowPosition({
+    //     x: event.clientX,
+    //     y: event.clientY,
+    //   });
+
+    //   const newNode = {
+    //     id: `node-${nodes.length}`,
+    //     type: "responsenode",
+    //     position,
+    //     data: { label },
+    //   };
+    //   console.log(newNode);
+    //   setNodes((nds) => [...nds, newNode]);
+    //   const newEdge = {
+    //     ...connection,
+    //     source,
+    //     target: newNode.id,
+    //     type: "step_labelled",
+    //     data: { label },
+    //     style: edgeStyle,
+    //     markerEnd: arrowHead,
+    //   };
+
+    //   setEdges((eds) => addEdge(newEdge, eds));
+    // }
+  });
+
   const onConnect = useCallback(
     (connection, event) => {
-      const { source, target, sourceHandle } = connection;
+      const { source, target } = connection;
       if (source == target) return;
       if (source == "start_node") {
         return setEdges((eds) =>
@@ -105,34 +141,32 @@ function FlowBoard() {
         );
       }
       const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
-      // console.log(source);
-      console.log(makeEdgeStyle(connection));
-      const targetIsPane = !target;
 
       //// ---------------- IF TARGET IS PANE
+      const targetIsPane = event.target.classList.contains("react-flow__pane");
       if (targetIsPane) {
         // Handle creating a new node at the drop position
-        const newNodePosition = reactFlowInstance.project({
+        const position = reactFlowInstance.screenToFlowPosition({
           x: event.clientX,
           y: event.clientY,
         });
 
         const newNode = {
-          id: `node-${nodes.length + 1}`,
-          type: "responsenode", // Replace with your actual node type
-          position: newNodePosition,
+          id: `node-${nodes.length}`,
+          type: "responsenode",
+          position,
           data: { label },
         };
         console.log(newNode);
-        setNodes((nds) => nds.concat(newNode));
+        setNodes((nds) => [...nds, newNode]);
         const newEdge = {
           ...connection,
           source,
           target: newNode.id,
-          type: "step_labelled", // Ensure this matches your configuration
-          data: { label }, // Customize edge data as needed
-          style: edgeStyle, // Define your edge style
-          markerEnd: arrowHead, // Define arrow head
+          type: "step_labelled",
+          data: { label },
+          style: edgeStyle,
+          markerEnd: arrowHead,
         };
 
         setEdges((eds) => addEdge(newEdge, eds));
@@ -196,6 +230,7 @@ function FlowBoard() {
     <>
       <ReactFlow
         onConnectStart={onConnectStart}
+        onConnectEnd={onConnect}
         proOptions={{ hideAttribution: true }}
         onInit={setReactFlowInstance}
         nodes={nodes}

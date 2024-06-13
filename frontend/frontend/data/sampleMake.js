@@ -3,7 +3,7 @@ import { initNodes } from "./initialNodes.js";
 
 // MAX NUMBER NESTING WILL BE MAX NODES
 // when source becomes the target, return the id string
-// const startNode = nodes.find((n) => n.id === "start_node"); //id: "start_node"
+// const startNode = initNodes.find((n) => n.id === "start_node"); //id: "start_node"
 // const [_, node2, node3, node4] = nodes;
 
 class Node {
@@ -84,10 +84,11 @@ export class LinkedNodes {
   }
 }
 
+const startNode = initNodes.find((n) => n.id === "start_node");
 const list = new LinkedNodes();
+list.append(startNode, startNode.id);
 
 export function makeConnectionsObj(objPrint, nodes, edges) {
-  // list.append(nodes[0]);
   for (let n = 0; n < nodes.length; n++) {
     const node = nodes[n];
 
@@ -117,8 +118,8 @@ export function makeConnectionsObj(objPrint, nodes, edges) {
     }
   }
 }
-// makeConnectionsObj(list, initNodes, initEdges);
+makeConnectionsObj(list, initNodes, initEdges);
 
-// const connectedList = JSON.stringify(list.getTree(), null, 2);
+const connectedList = JSON.stringify(list.getTree(), null, 2);
 
-// console.log(connectedList);
+console.log(connectedList);
