@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import ReactFlow, {
   Background,
   addEdge,
@@ -13,6 +13,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import FloatingConnectionLine from "./FloatingConnectionLine.jsx";
 import { useNodesContext } from "../context/NodesContext.jsx";
+import { makeEdgeStyle } from "../utils/makeEdgeStyle.js";
 
 function FlowBoard() {
   const {
@@ -28,7 +29,7 @@ function FlowBoard() {
     edges,
     setEdges,
   } = useNodesContext();
-
+  const connectingNodeId = useRef(null);
   //  DRAG AND DROP COMPONENTS
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -39,26 +40,18 @@ function FlowBoard() {
     (event) => {
       event.preventDefault();
 
-      // const type = event.dataTransfer.getData("application/reactflow");
-      const type = "responsenode";
-
-      // check if the dropped element is valid
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
-
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
       const newNode = {
         id: `node-${nodes.length + 1}`,
-        type: type,
+        type: "responsenode",
         position,
         data: {},
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => [...nds, newNode]);
     },
     [reactFlowInstance, nodes, setNodes]
   );
@@ -85,10 +78,15 @@ function FlowBoard() {
     [edges]
   );
 
+  const onConnectStart = useCallback((_, { nodeId }) => {
+    connectingNodeId.current = nodeId;
+  }, []);
+
   const onConnect = useCallback(
-    (connection) => {
-      if (connection.source == connection.target) return;
-      if (connection.source == "start_node")
+    (connection, event) => {
+      const { source, target, sourceHandle } = connection;
+      if (source == target) return;
+      if (source == "start_node") {
         return setEdges((eds) =>
           addEdge(
             {
@@ -105,59 +103,90 @@ function FlowBoard() {
             eds
           )
         );
-      let label = "Neutral";
-      let edgeStyle = { stroke: "blue", strokeWidth: 2 };
-      let arrowHead = {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-      };
-      switch (connection.sourceHandle) {
-        case "b":
-          label = "Neutral";
-          edgeStyle = { stroke: "blue", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "blue" };
-          break;
-        case "g":
-          label = "Positive";
-          edgeStyle = { stroke: "green", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "green" };
-          break;
-        case "r":
-          label = "Negative";
-          edgeStyle = { stroke: "red", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "red" };
-          break;
-
-        default:
-          break;
       }
-      console.log(edges, connection);
-      let newEdge = edges.find(
-        (edg) =>
-          edg.source == connection.source && edg.target == connection.target
-      );
-      console.log(newEdge ? "found" : "notfound");
-      const edge = {
-        ...connection,
-        type: "step_labelled",
-        data: { label },
-        style: edgeStyle,
-        markerEnd: arrowHead,
-      };
+      const { label, edgeStyle, arrowHead } = makeEdgeStyle(source);
+      // let label = "Neutral";
+      // let edgeStyle = { stroke: "blue", strokeWidth: 2 };
+      // let arrowHead = {
+      //   type: MarkerType.ArrowClosed,
+      //   width: 20,
+      //   height: 20,
+      // };
+      // switch (sourceHandle) {
+      //   case "b":
+      //     label = "Neutral";
+      //     edgeStyle = { stroke: "blue", strokeWidth: 2 };
+      //     arrowHead = { ...arrowHead, color: "blue" };
+      //     break;
+      //   case "g":
+      //     label = "Positive";
+      //     edgeStyle = { stroke: "green", strokeWidth: 2 };
+      //     arrowHead = { ...arrowHead, color: "green" };
+      //     break;
+      //   case "r":
+      //     label = "Negative";
+      //     edgeStyle = { stroke: "red", strokeWidth: 2 };
+      //     arrowHead = { ...arrowHead, color: "red" };
+      //     break;
 
-      setEdges((eds) => {
-        const filteredEdges = eds.filter(
-          (edge) =>
-            !(
-              edge.source === connection.source &&
-              edge.target === connection.target
-            )
-        );
-        return addEdge(edge, filteredEdges);
-      });
+      //   default:
+      //     break;
+      // }
+      // console.log(edges, connection);
+      const targetIsPane = !target;
+
+      //// ---------------- IF TARGET IS PANE
+      if (targetIsPane) {
+        // Handle creating a new node at the drop position
+        const newNodePosition = reactFlowInstance.project({
+          x: event.clientX,
+          y: event.clientY,
+        });
+
+        const newNode = {
+          id: `node-${nodes.length + 1}`,
+          type: "responsenode", // Replace with your actual node type
+          position: newNodePosition,
+          data: { label },
+        };
+        console.log(newNode);
+        setNodes((nds) => nds.concat(newNode));
+        const newEdge = {
+          ...connection,
+          source,
+          target: newNode.id,
+          type: "step_labelled", // Ensure this matches your configuration
+          data: { label }, // Customize edge data as needed
+          style: edgeStyle, // Define your edge style
+          markerEnd: arrowHead, // Define arrow head
+        };
+
+        setEdges((eds) => addEdge(newEdge, eds));
+      }
+      //// ---------------- IF TARGET IS A NODE
+      else {
+        connectingNodeId.current = null;
+        const edge = {
+          ...connection,
+          type: "step_labelled",
+          data: { label },
+          style: edgeStyle,
+          markerEnd: arrowHead,
+        };
+
+        setEdges((eds) => {
+          const filteredEdges = eds.filter(
+            (edge) =>
+              !(
+                edge.source === connection.source &&
+                edge.target === connection.target
+              )
+          );
+          return addEdge(edge, filteredEdges);
+        });
+      }
     },
-    [setEdges]
+    [nodes.length, reactFlowInstance, setNodes, setEdges]
   );
 
   //  HANDLE DELETE KEY LOGIC
@@ -192,6 +221,7 @@ function FlowBoard() {
   return (
     <>
       <ReactFlow
+        onConnectStart={onConnectStart}
         proOptions={{ hideAttribution: true }}
         onInit={setReactFlowInstance}
         nodes={nodes}

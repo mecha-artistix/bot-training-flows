@@ -20,7 +20,7 @@ function ModelPrompt() {
         let parentId = parent && parent.id ? parent.id : "";
         let parentResLabel =
           parent && parent.data && parent.data.texts ? parent.data.texts : "";
-
+        let intention = current.intention ? current.intention : "";
         // Collect response labels and texts
         let responseLabel =
           current.response && current.response.label
@@ -32,16 +32,16 @@ function ModelPrompt() {
             : "";
         let botText =
           current.data && current.data.texts ? current.data.texts : "";
-
+        let botId = current.id ? current.id : "";
         // Add the collected texts to modelPrompt
         prompt +=
           (responseLabel.length > 0
-            ? `Response to --> ${parentId}\n > ${responseLabel}\n`
+            ? `IF Respond ${intention}ly for example ${responseLabel} to --> ${parentId}\n`
             : "\n") +
           (responseTexts.length > 0
-            ? `Response Examples --> ${responseTexts}\n`
+            ? `Other Examples --> ${responseTexts}\n`
             : "\n") +
-          (botText.length > 0 ? `Bot Response --> ${botText}\n` : "\n");
+          (botText.length > 0 ? `Then ${botId} --> ${botText}\n` : "\n");
 
         // Enqueue children nodes
         if (current.positive)
