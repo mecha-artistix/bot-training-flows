@@ -1,30 +1,34 @@
 import { MarkerType } from "reactflow";
 export function makeEdgeStyle(source) {
   const sourceHandle = source.sourceHandle;
-  const props = {
+  const defaultProps = {
     label: "",
     edgeStyle: {},
     arrowHead: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
   };
   switch (sourceHandle) {
     case "b":
-      props.label = "Neutral";
-      props.edgeStyle = { stroke: "blue", strokeWidth: 2 };
-      props.arrowHead = { ...props.arrowHead, color: "blue" };
-      break;
+      return {
+        ...defaultProps,
+        label: "Neutral",
+        edgeStyle: { stroke: "blue", strokeWidth: 2 },
+        arrowHead: { ...defaultProps.arrowHead, color: "blue" },
+      };
     case "g":
-      props.label = "Positive";
-      props.edgeStyle = { stroke: "green", strokeWidth: 2 };
-      props.arrowHead = { ...props.arrowHead, color: "green" };
-      break;
+      return {
+        ...defaultProps,
+        label: "Positive",
+        edgeStyle: { stroke: "green", strokeWidth: 2 },
+        arrowHead: { ...defaultProps.arrowHead, color: "green" },
+      };
     case "r":
-      props.label = "Negative";
-      props.edgeStyle = { stroke: "red", strokeWidth: 2 };
-      props.arrowHead = { ...props.arrowHead, color: "red" };
-      break;
-
+      return {
+        ...defaultProps,
+        label: "Negative",
+        edgeStyle: { stroke: "red", strokeWidth: 2 },
+        arrowHead: { ...defaultProps.arrowHead, color: "red" },
+      };
     default:
-      break;
+      return defaultProps;
   }
-  return props;
 }
