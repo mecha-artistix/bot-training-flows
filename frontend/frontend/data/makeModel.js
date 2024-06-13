@@ -26,20 +26,20 @@ const connectedList = List.getTree();
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-let final = "";
+let modelPrompt = "";
 
 /////// ---------------bfs
 const generateModel = (head) => {
   let strArray = [];
   if (!head) return;
-  debugger;
   let queue = [{ node: head, parent: null }];
-  console.log(queue);
   while (queue.length > 0) {
     let { node: current, parent } = queue.shift();
 
+    let parentId = parent && parent.id ? parent.id : "";
     let parentResLabel =
       parent && parent.data && parent.data.texts ? parent.data.texts : "";
+
     // Collect response labels and texts
     let responseLabel =
       current.response && current.response.label ? current.response.label : "";
@@ -50,15 +50,15 @@ const generateModel = (head) => {
     let botText = current.data && current.data.texts ? current.data.texts : "";
 
     // Add the collected texts to strArray
-    final +=
+    modelPrompt +=
       responseLabel.length > 0
-        ? "Response to --> " + parentResLabel + "\n > " + responseLabel + "\n"
+        ? "Response to --> " + parentId + "\n > " + responseLabel + "\n"
         : "\n";
-    final +=
+    modelPrompt +=
       responseTexts.length > 0
         ? "Response Examples --> " + responseTexts + "\n"
         : "\n";
-    final +=
+    modelPrompt +=
       botText.length > 0 ? "Bot Response --> " + botText + "\n\n\n\n" : "\n";
     // strArray.push("response", responseLabel, responseTexts, "bot", botText);
 
@@ -73,5 +73,8 @@ const generateModel = (head) => {
   return strArray;
 };
 const arr = generateModel(connectedList);
-// final += arr.join("\n");
-console.log(final);
+// modelPrompt += arr.join("\n");
+console.log(modelPrompt);
+const list = JSON.stringify(List.getTree(), null, 2);
+
+// console.log(list);

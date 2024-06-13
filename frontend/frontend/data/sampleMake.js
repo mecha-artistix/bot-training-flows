@@ -10,6 +10,7 @@ class Node {
   constructor(data) {
     this.id = data.id;
     this.data = data.data;
+    this.intention = data.intention;
     this.response = data.response;
     this.positive = null;
     this.negative = null;
@@ -72,6 +73,7 @@ export class LinkedNodes {
         id: node.id,
         data: node.data,
         response: node.response,
+        intention: node.intention,
         positive: buildTree(node.positive),
         negative: buildTree(node.negative),
         neutral: buildTree(node.neutral),
@@ -97,6 +99,7 @@ export function makeConnectionsObj(objPrint, nodes, edges) {
       const response = edg.data;
       const nextNode = nodes.find((n) => n.id == edg.target);
       nextNode.response = response;
+      nextNode.intention = "";
       let next = "";
 
       switch (edg.sourceHandle) {
@@ -109,6 +112,7 @@ export function makeConnectionsObj(objPrint, nodes, edges) {
         default:
           next = "neutral";
       }
+      nextNode.intention = next;
       objPrint.append(nextNode, node.id, next);
     }
   }
