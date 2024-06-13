@@ -36,7 +36,7 @@ function ModelPrompt() {
         // Add the collected texts to modelPrompt
         prompt +=
           (responseLabel.length > 0
-            ? `IF Respond ${intention}ly for example ${responseLabel} to --> ${parentId}\n`
+            ? `IF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n`
             : "\n") +
           (responseTexts.length > 0
             ? `Other Examples --> ${responseTexts}\n`
