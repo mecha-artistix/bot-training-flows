@@ -82,120 +82,90 @@ function FlowBoard() {
     connectingNodeId.current = nodeId;
   }, []);
 
-  const onConnectEnd = useCallback((event) => {
-    if (connectingNodeId.current) return;
-    console.log(connectingNodeId, event);
+  const onConnectEnd = useCallback(
+    (event) => {
+      if (connectingNodeId.current) return;
+      console.log(connectingNodeId, event);
 
-    // const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
-    // // console.log(source);
-    // const targetIsPane = event.target.classList.contains("react-flow__pane");
-    // if (targetIsPane) {
-    //   // Handle creating a new node at the drop position
-    //   const position = reactFlowInstance.screenToFlowPosition({
-    //     x: event.clientX,
-    //     y: event.clientY,
-    //   });
+      // const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
+      // // console.log(source);
+      // const targetIsPane = event.target.classList.contains("react-flow__pane");
+      // if (targetIsPane) {
+      //   // Handle creating a new node at the drop position
+      //   const position = reactFlowInstance.screenToFlowPosition({
+      //     x: event.clientX,
+      //     y: event.clientY,
+      //   });
 
-    //   const newNode = {
-    //     id: `node-${nodes.length}`,
-    //     type: "responsenode",
-    //     position,
-    //     data: { label },
-    //   };
-    //   console.log(newNode);
-    //   setNodes((nds) => [...nds, newNode]);
-    //   const newEdge = {
-    //     ...connection,
-    //     source,
-    //     target: newNode.id,
-    //     type: "step_labelled",
-    //     data: { label },
-    //     style: edgeStyle,
-    //     markerEnd: arrowHead,
-    //   };
+      //   const newNode = {
+      //     id: `node-${nodes.length}`,
+      //     type: "responsenode",
+      //     position,
+      //     data: { label },
+      //   };
+      //   console.log(newNode);
+      //   setNodes((nds) => [...nds, newNode]);
+      //   const newEdge = {
+      //     ...connection,
+      //     source,
+      //     target: newNode.id,
+      //     type: "step_labelled",
+      //     data: { label },
+      //     style: edgeStyle,
+      //     markerEnd: arrowHead,
+      //   };
 
-    //   setEdges((eds) => addEdge(newEdge, eds));
-    // }
-  });
-
-  const onConnect = useCallback(
-    (connection, event) => {
-      const { source, target } = connection;
-      if (source == target) return;
-      if (source == "start_node") {
-        return setEdges((eds) =>
-          addEdge(
-            {
-              ...connection,
-              type: "step_path",
-              style: { stroke: "green", strokeWidth: 2 },
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                width: 20,
-                height: 20,
-                color: "green",
-              },
-            },
-            eds
-          )
-        );
-      }
-      const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
-
-      //// ---------------- IF TARGET IS PANE
-      const targetIsPane = event.target.classList.contains("react-flow__pane");
-      if (targetIsPane) {
-        // Handle creating a new node at the drop position
-        const position = reactFlowInstance.screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        });
-
-        const newNode = {
-          id: `node-${nodes.length}`,
-          type: "responsenode",
-          position,
-          data: { label },
-        };
-        console.log(newNode);
-        setNodes((nds) => [...nds, newNode]);
-        const newEdge = {
-          ...connection,
-          source,
-          target: newNode.id,
-          type: "step_labelled",
-          data: { label },
-          style: edgeStyle,
-          markerEnd: arrowHead,
-        };
-
-        setEdges((eds) => addEdge(newEdge, eds));
-      }
-      //// ---------------- IF TARGET IS A NODE
-      else {
-        connectingNodeId.current = null;
-        const edge = {
-          ...connection,
-          type: "step_labelled",
-          data: { label },
-          style: edgeStyle,
-          markerEnd: { ...arrowHead },
-        };
-
-        setEdges((eds) => {
-          const filteredEdges = eds.filter(
-            (edge) =>
-              !(
-                edge.source === connection.source &&
-                edge.target === connection.target
-              )
-          );
-          return addEdge(edge, filteredEdges);
-        });
-      }
+      //   setEdges((eds) => addEdge(newEdge, eds));
+      // }
     },
     [nodes.length, reactFlowInstance, setNodes, setEdges]
   );
+
+  const onConnect = useCallback((connection, event) => {
+    const { source, target } = connection;
+    if (source == target) return;
+    if (source == "start_node") {
+      return setEdges((eds) =>
+        addEdge(
+          {
+            ...connection,
+            type: "step_path",
+            style: { stroke: "green", strokeWidth: 2 },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              width: 20,
+              height: 20,
+              color: "green",
+            },
+          },
+          eds
+        )
+      );
+    }
+    const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
+
+    //// ---------------- IF TARGET IS A NODE
+
+    connectingNodeId.current = null;
+    const edge = {
+      ...connection,
+      type: "step_labelled",
+      data: { label },
+      style: edgeStyle,
+      markerEnd: { ...arrowHead },
+    };
+
+    setEdges((eds) => {
+      const filteredEdges = eds.filter(
+        (edge) =>
+          !(
+            edge.source === connection.source &&
+            edge.target === connection.target
+          )
+      );
+      return addEdge(edge, filteredEdges);
+    });
+  });
 
   //  HANDLE DELETE KEY LOGIC
   const deleteSelectedElement = useCallback(() => {
@@ -230,7 +200,7 @@ function FlowBoard() {
     <>
       <ReactFlow
         onConnectStart={onConnectStart}
-        onConnectEnd={onConnect}
+        // onConnectEnd={onConnect}
         proOptions={{ hideAttribution: true }}
         onInit={setReactFlowInstance}
         nodes={nodes}

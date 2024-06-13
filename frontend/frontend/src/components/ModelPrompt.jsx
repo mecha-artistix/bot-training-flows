@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNodesContext } from "../context/NodesContext";
-import { makeConnectionsObj, LinkedNodes } from "../../data/sampleMake";
+import { makeConnectionsObj, LinkedNodes } from "../utils/makeConnectionsObj";
 function ModelPrompt() {
   const { nodes, edges } = useNodesContext();
   const [modelPrompt, setModelPrompt] = useState("");
