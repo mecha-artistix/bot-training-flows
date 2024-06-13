@@ -1,5 +1,5 @@
 import { MarkerType } from "reactflow";
-export function makeEdgeStyle(source) {
+export const makeEdgeStyle = function (source) {
   const sourceHandle = source.sourceHandle;
   const defaultProps = {
     label: "",
@@ -29,6 +29,7 @@ export function makeEdgeStyle(source) {
         arrowHead: { ...defaultProps.arrowHead, color: "red" },
       };
     default:
+      console.log("hi");
       return defaultProps;
   }
-}
+};

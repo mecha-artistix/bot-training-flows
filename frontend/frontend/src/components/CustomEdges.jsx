@@ -135,7 +135,7 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
 
   return (
     <div
-      className={`bg-white absolute border border-black p-2 rounded animate-slideDown ${
+      className={`bg-white absolute border border-black p-2 rounded animate-slideDown z-40 ${
         isExpanded ? "animate-slideDown" : "animate-slideUp"
       }`}
     >

@@ -104,37 +104,9 @@ function FlowBoard() {
           )
         );
       }
-      // const { label, edgeStyle, arrowHead } = makeEdgeStyle(source);
-      // console.log(connection.source);
-      // console.log(makeEdgeStyle(source));
-      let label = "Neutral";
-      let edgeStyle = { stroke: "blue", strokeWidth: 2 };
-      let arrowHead = {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-      };
-      switch (sourceHandle) {
-        case "b":
-          label = "Neutral";
-          edgeStyle = { stroke: "blue", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "blue" };
-          break;
-        case "g":
-          label = "Positive";
-          edgeStyle = { stroke: "green", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "green" };
-          break;
-        case "r":
-          label = "Negative";
-          edgeStyle = { stroke: "red", strokeWidth: 2 };
-          arrowHead = { ...arrowHead, color: "red" };
-          break;
-
-        default:
-          break;
-      }
-      // console.log(edges, connection);
+      const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
+      // console.log(source);
+      console.log(makeEdgeStyle(connection));
       const targetIsPane = !target;
 
       //// ---------------- IF TARGET IS PANE
