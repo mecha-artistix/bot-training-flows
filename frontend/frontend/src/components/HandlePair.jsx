@@ -50,11 +50,28 @@ function HandlePair({ isConnectable, data }) {
       <Handle
         type="target"
         position={Position.Top}
-        style={{ ...styleTarget, width: "100%", height: "10px", top: "-5px" }}
+        style={{ ...styleTarget, width: "100%", height: "5px", top: "5px" }}
       />
-      <Handle type="target" position={Position.Left} style={{ opacity: 1 }} />
-      <Handle type="target" position={Position.Bottom} style={{ opacity: 1 }} />
-      <Handle type="target" position={Position.Right} style={{ opacity: 1 }} />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        style={{
+          ...styleTarget,
+          width: "100%",
+          height: "5px",
+          bottom: "5px",
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        style={{ ...styleTarget, height: "100%", width: "5px", left: "5px" }}
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        style={{ ...styleTarget, height: "100%", width: "5px", right: "5px" }}
+      />
       {/* LEFT TARGET HANDLES*/}
     </>
   );

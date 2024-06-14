@@ -11,7 +11,7 @@ class Node {
     this.id = data.id;
     this.data = data.data;
     this.intention = data.intention;
-    this.response = data.response;
+    this.response = data.response || {};
     this.positive = null;
     this.negative = null;
     this.neutral = null;
@@ -86,7 +86,7 @@ export class LinkedNodes {
 
 const startNode = initNodes.find((n) => n.id === "start_node");
 const list = new LinkedNodes();
-list.append(startNode, startNode.id);
+list.append(startNode);
 
 export function makeConnectionsObj(objPrint, nodes, edges) {
   for (let n = 0; n < nodes.length; n++) {
@@ -115,6 +115,7 @@ export function makeConnectionsObj(objPrint, nodes, edges) {
       }
       nextNode.intention = next;
       objPrint.append(nextNode, node.id, next);
+      console.log(objPrint);
     }
   }
 }
