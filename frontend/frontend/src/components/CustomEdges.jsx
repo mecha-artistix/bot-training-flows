@@ -27,9 +27,9 @@ function Step_labelled_path({
   const targetNode = useStore(
     useCallback((store) => store.nodeInternals.get(target), [target])
   );
-  if (!sourceNode || !targetNode) {
-    return null;
-  }
+  // if (!sourceNode || !targetNode) {
+  //   return null;
+  // }
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
     sourceNode,
     targetNode
@@ -50,9 +50,10 @@ function Step_labelled_path({
   const handleLabel = (e) => {
     setLabel(e.target.value);
   };
-  useEffect(() => {
-    data.label = label;
-  }, [label, data.label]);
+
+  const handleAdd = () => {
+    data.inputs = inputs;
+  };
 
   const removeInput = (index) => {
     setInputs((prev) => {
@@ -60,13 +61,13 @@ function Step_labelled_path({
       newInputs.splice(index, 1);
     });
   };
-
+  useEffect(() => {
+    data.label = label;
+  }, [label, data]);
   useEffect(() => {
     data.inputs = inputs;
-  }, [inputs, data.inputs]);
-  const handleAdd = () => {
-    data.inputs = inputs;
-  };
+  }, [inputs, data]);
+
   return (
     <>
       <path
@@ -215,7 +216,6 @@ function SmoothStepPath({
         d={edgePath}
         markerEnd={markerEnd}
       />
-      {console.log(edgePath)}
     </>
   );
 }
