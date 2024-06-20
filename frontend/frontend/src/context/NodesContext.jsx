@@ -9,8 +9,8 @@ import { useNodesState, useEdgesState, isNode, isEdge } from "reactflow";
 import ResponseNode from "../components/ResponseNode";
 import { ActionNode, startNode } from "../components/ActionNode";
 import { Step_labelled_path, SmoothStepPath } from "../components/CustomEdges";
-import { initNodes } from "../../data/initialNodes.js";
-import { initEdges } from "../../data/initialEdges.js";
+// import { initNodes } from "../../data/initialNodes.js";
+// import { initEdges } from "../../data/initialEdges.js";
 
 const NodesContext = createContext();
 
