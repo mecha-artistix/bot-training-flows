@@ -21,8 +21,8 @@ const edgeTypes = {
 };
 
 function NodesProvider({ children, reactFlowRef }) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(startNode);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedElement, setSelectedElement] = useState();
