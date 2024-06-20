@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNodesContext } from "../context/NodesContext";
-import ModelPrompt from "./ModelPrompt";
+import { LinkedNodes } from "../utils/generateModelClass";
+// import ModelPrompt from "./ModelPrompt";
 function DrawingControlsPanel() {
   const {
     nodes,
@@ -13,6 +14,7 @@ function DrawingControlsPanel() {
     nodeConnections,
   } = useNodesContext();
   const [viewPrompt, setViewPrompt] = useState(false);
+  const [prompt, setPrompt] = useState("");
   const promptRef = useRef(null);
 
   useEffect(() => {
@@ -32,6 +34,8 @@ function DrawingControlsPanel() {
     event.dataTransfer.effectAllowed = "move";
   };
   const handleMake = () => {
+    const list = new LinkedNodes(nodes, edges);
+    setPrompt(list.modelPrompt);
     setViewPrompt((viewPrompt) => !viewPrompt);
     console.log(viewPrompt);
     console.log(
@@ -64,9 +68,11 @@ function DrawingControlsPanel() {
       {viewPrompt && (
         <div
           ref={promptRef}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/4 backdrop-blur-md z-50 p-4 border border-slate-500 w-9/12"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 backdrop-blur-md z-50 p-4 border border-slate-500 w-9/12 h-[600px] overflow-y-auto"
         >
-          <ModelPrompt />
+          <div className="w-full h-full" style={{ whiteSpace: "pre-wrap" }}>
+            {prompt}
+          </div>
         </div>
       )}
       <div className="w-full p-2 flex justify-between">

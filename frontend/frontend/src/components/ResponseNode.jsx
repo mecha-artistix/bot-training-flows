@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import HandlePair from "./HandlePair";
 
 export default function ResponseNode({ data }) {
-  const [label, setLabel] = useState(data.label || "");
+  const [label, setLabel] = useState(data.label || data.id);
   const [textAreas, setTextAreas] = useState(data.texts || [""]);
 
   const handleLabelChange = (e) => {

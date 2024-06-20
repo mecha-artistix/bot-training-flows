@@ -44,11 +44,12 @@ function FlowBoard() {
         x: event.clientX,
         y: event.clientY,
       });
+      const nodeId = `node-${nodes.length}`;
       const newNode = {
-        id: `node-${nodes.length}`,
+        id: nodeId,
         type: "responsenode",
         position,
-        data: {},
+        data: { id: nodeId },
       };
 
       setNodes((nds) => [...nds, newNode]);

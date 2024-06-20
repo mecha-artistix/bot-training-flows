@@ -1,20 +1,13 @@
-// import { initEdges } from "./initialEdges.js";
-// import { initNodes } from "./initialNodes.js";
-
-// MAX NUMBER NESTING WILL BE MAX NODES
-// when source becomes the target, return the id string
-// const startNode = initNodes.find((n) => n.id === "start_node"); //id: "start_node"
-// const [_, node2, node3, node4] = nodes;
-
 class Node {
   constructor(data) {
     this.id = data.id;
     this.data = data.data;
     this.intention = data.intention;
-    this.response = data.response;
-    this.positive = null;
-    this.negative = null;
-    this.neutral = null;
+    this.response = data.response || {};
+    this.positive = [];
+    this.negative = [];
+    this.neutral = [];
+    this.parents = []; // To keep track of nodes that connect to this node
   }
   setResponse(response) {
     this.response = response;
@@ -23,68 +16,50 @@ class Node {
 
 export class LinkedNodes {
   constructor() {
-    this.head = null;
-    this.length = 0;
-  }
-
-  contains(id) {
-    let count = 0;
-    const countNodes = (node) => {
-      if (!node) return;
-      if (node.id === id) count++;
-
-      countNodes(node.positive);
-      countNodes(node.negative);
-      countNodes(node.neutral);
-    };
-    countNodes(this.head);
-    return count;
+    this.nodes = {}; // Use a map for quick lookup
   }
 
   findNode(id) {
-    const findId = (node) => {
-      if (!node) return null;
-      if (node.id === id) return node;
-      return (
-        findId(node.positive) || findId(node.negative) || findId(node.neutral)
-      );
-    };
-    return findId(this.head);
+    return this.nodes[id] || null;
   }
 
-  append(data, id, branch) {
-    const node = new Node(data);
-
-    if (this.findNode(id)) {
-      let current = this.findNode(id);
-      current[branch] = node;
-      current[branch].setResponse(node.response);
-    } else {
-      this.head = node;
+  append(data, parentId = null, branch = null) {
+    if (!this.nodes[data.id]) {
+      this.nodes[data.id] = new Node(data);
     }
+    const node = this.nodes[data.id];
 
-    this.length++;
+    if (parentId && branch) {
+      if (!this.nodes[parentId]) {
+        throw new Error(`Parent node with id ${parentId} does not exist`);
+      }
+      const parentNode = this.nodes[parentId];
+      parentNode[branch].push(node);
+      node.parents.push({ parentId, branch });
+    }
   }
 
   getTree() {
+    // Return a nested structure of the tree from all nodes
     const buildTree = (node) => {
-      if (!node) return null;
       return {
         id: node.id,
         data: node.data,
         response: node.response,
         intention: node.intention,
-        positive: buildTree(node.positive),
-        negative: buildTree(node.negative),
-        neutral: buildTree(node.neutral),
+        positive: node.positive.map(buildTree),
+        negative: node.negative.map(buildTree),
+        neutral: node.neutral.map(buildTree),
       };
     };
 
-    return buildTree(this.head);
+    const roots = Object.values(this.nodes).filter(
+      (node) => node.parents.length === 0
+    );
+    return roots.map(buildTree);
   }
 }
 
-// const startNode = initNodes.find((n) => n.id === "start_node");
 const list = new LinkedNodes();
 // list.append(startNode, startNode.id);
 
@@ -92,33 +67,34 @@ export function makeConnectionsObj(objPrint, nodes, edges) {
   for (let n = 0; n < nodes.length; n++) {
     const node = nodes[n];
 
-    objPrint.append(node, node.id);
+    if (!objPrint.findNode(node.id)) {
+      objPrint.append(node);
+    }
 
-    const connections = edges.filter((edg) => edg.source == node.id);
+    const connections = edges.filter((edg) => edg.source === node.id);
     for (let e = 0; e < connections.length; e++) {
       const edg = connections[e];
-      const response = edg.data;
-      const nextNode = nodes.find((n) => n.id == edg.target);
-      nextNode.response = response;
+      const nextNode = nodes.find((n) => n.id === edg.target);
+      nextNode.response = edg.data || nextNode.response;
       nextNode.intention = "";
-      let next = "";
 
+      let nextBranch = "";
       switch (edg.sourceHandle) {
         case "r":
-          next = "negative";
+          nextBranch = "negative";
           break;
         case "g":
-          next = "positive";
+          nextBranch = "positive";
           break;
         default:
-          next = "neutral";
+          nextBranch = "neutral";
       }
-      nextNode.intention = next;
-      objPrint.append(nextNode, node.id, next);
+      nextNode.intention = nextBranch;
+      objPrint.append(nextNode, node.id, nextBranch);
     }
   }
 }
-// makeConnectionsObj(list, initNodes, initEdges);
+makeConnectionsObj(list, initNodes, initEdges);
 
 // const connectedList = JSON.stringify(list.getTree(), null, 2);
 
