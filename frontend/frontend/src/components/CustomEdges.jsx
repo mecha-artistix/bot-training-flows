@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { EdgeLabelRenderer, getSmoothStepPath, useStore } from "reactflow";
 import { getEdgeParams } from "../utils/getNodeIntersections";
-
+import adjustPath from "../utils/adjustPath";
 const edgeStyles = {
   positive: { stroke: "green", strokeWidth: 2 },
   negative: { stroke: "red", strokeWidth: 2 },
@@ -191,22 +191,24 @@ function SmoothStepPath({
   const targetNode = useStore(
     useCallback((store) => store.nodeInternals.get(target), [target])
   );
-  if (!sourceNode || !targetNode) {
-    return null;
-  }
+
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
     sourceNode,
     targetNode
   );
-  const [edgePath] = getSmoothStepPath({
+  let [edgePath] = getSmoothStepPath({
     sourceX,
     sourceY,
-    sourcePosition: sourcePos,
     targetX: tx,
     targetY: ty,
+    sourcePosition: sourcePos,
     targetPosition: targetPos,
   });
+  // console.log("Initial Edge Path:", edgePath);
 
+  edgePath = adjustPath(edgePath, sourceX, sourceY, 50);
+
+  // console.log("Adjusted Edge Path:", edgePath);
   return (
     <>
       <path
@@ -220,6 +222,49 @@ function SmoothStepPath({
   );
 }
 
+//--------------------- Utility function to add horizontal line before curving towards target node
+function getAdjustedStepPath({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  horizontalSpacing = 50,
+}) {
+  const path = [];
+
+  // Start at the source position
+  path.push(`M${sourceX},${sourceY}`);
+
+  // Add initial horizontal line immediately after starting
+  if (sourcePosition === "right") {
+    path.push(`H${sourceX + horizontalSpacing}`);
+    // Move vertically to align with target's y-coordinate
+    path.push(`V${targetY}`);
+  } else if (sourcePosition === "left") {
+    path.push(`H${sourceX - horizontalSpacing}`);
+    // Move vertically to align with target's y-coordinate
+    path.push(`V${targetY}`);
+  } else if (sourcePosition === "top" || sourcePosition === "bottom") {
+    // For top and bottom, adjust horizontally first
+    const midX = (sourceX + targetX) / 2;
+    path.push(`H${midX}`);
+    // Move vertically to align with target's y-coordinate
+    path.push(`V${targetY}`);
+  } else {
+    // Default to moving directly horizontally if position is undefined
+    path.push(`H${targetX}`);
+  }
+
+  // Final horizontal segment to the target x-coordinate
+  if (targetPosition === "right" || targetPosition === "left") {
+    path.push(`H${targetX}`);
+  }
+
+  // Join all path commands into a single string
+  return path.join(" ");
+}
 //--------------------- Utility function to determine the closest point on a node's boundary
 
 const getClosestBoundaryPoint = (x, y, node) => {

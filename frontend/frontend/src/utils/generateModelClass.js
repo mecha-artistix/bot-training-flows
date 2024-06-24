@@ -175,7 +175,7 @@ export class LinkedNodes {
         (responseTexts.length > 0
           ? `Other Examples --> ${responseTexts}\n`
           : "\n") +
-        (botText.length > 0 ? `Then ${botId} --> ${botText}\n` : "\n");
+        (botText.length > 0 ? `Then\n${botId} --> ${botText}\n` : "\n\n");
 
       // this.modelPrompt +=
       //   responseLabel.length > 0
@@ -196,7 +196,7 @@ export class LinkedNodes {
       if (current.neutral && current.neutral.length > 0)
         this.enqueueChildren(queue, current.neutral, current);
     }
-
+    console.log(this.modelPrompt);
     return this.modelPrompt;
   }
 }

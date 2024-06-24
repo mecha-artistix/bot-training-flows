@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNodesContext } from "../context/NodesContext";
 import { LinkedNodes } from "../utils/generateModelClass";
 // import ModelPrompt from "./ModelPrompt";
@@ -29,25 +29,36 @@ function DrawingControlsPanel() {
     };
   }, [reactFlowInstance]);
 
+  const generatePrompt = useCallback(() => {
+    const list = new LinkedNodes(nodes, edges);
+    setPrompt(list.generateModel()); // Ensure prompt is generated and set
+  }, [nodes, edges]);
+
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
   };
-  const handleMake = () => {
+  useEffect(() => {
     const list = new LinkedNodes(nodes, edges);
     setPrompt(list.modelPrompt);
+    console.log(nodes);
+  }, [nodes, edges]);
+
+  const handleMake = () => {
+    // const list = new LinkedNodes(nodes, edges);
+    // setPrompt(list.modelPrompt);
+
     setViewPrompt((viewPrompt) => !viewPrompt);
-    console.log(viewPrompt);
-    console.log(
-      "nodeConnections",
-      nodeConnections,
-      "\n",
-      "edges",
-      edges,
-      "\n",
-      "nodes",
-      nodes
-    );
+    // console.log(
+    //   "nodeConnections",
+    //   nodeConnections,
+    //   "\n",
+    //   "edges",
+    //   edges,
+    //   "\n",
+    //   "nodes",
+    //   nodes
+    // );
   };
 
   useEffect(() => {
