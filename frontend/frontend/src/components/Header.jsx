@@ -19,8 +19,8 @@ function Header() {
           },
           body: JSON.stringify({
             name: flowName, //{ type: String, required: true },
-            nodes: [],
-            edges: [],
+            nodes: startNode,
+            // edges: [],
             user: localStorage.getItem('userID'),
           }),
         });

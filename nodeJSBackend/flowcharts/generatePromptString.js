@@ -48,7 +48,8 @@ class LinkedNodes {
 
     this.nds = nds;
     this.eds = eds;
-    this.prompt = '';
+    // this.prompt = '';
+    this.modelPrompt = '';
 
     this.makeConnectionsObj();
     this.generateModel();
@@ -181,7 +182,7 @@ class LinkedNodes {
       if (current.negative && current.negative.length > 0) this.enqueueChildren(queue, current.negative, current);
       if (current.neutral && current.neutral.length > 0) this.enqueueChildren(queue, current.neutral, current);
     }
-    // console.log(this.modelPrompt);
+    console.log(this.modelPrompt);
     return this.modelPrompt;
   }
 }
