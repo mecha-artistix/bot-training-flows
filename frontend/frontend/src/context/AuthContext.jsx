@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
       });
       const data = await response.json();
       if (response.status === 201) {
-        dispatch({ type: 'success' });
+        dispatch({ type: 'success', payload: { username: data.username, userID: data.userID } });
       } else {
         throw new Error(data.message);
       }
