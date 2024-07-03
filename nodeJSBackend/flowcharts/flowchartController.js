@@ -1,13 +1,28 @@
 const Flowchart = require('./flowchartModel');
 const UserProfile = require('../userProfile/UserProfileModel');
+const LinkedNodes = require('./generatePromptString');
 
 exports.createFlowchart = async (req, res) => {
   try {
     const { name, nodes, edges, user } = req.body;
-    console.log('user : ', user);
-    const flowChartData = { name, nodes, edges, user };
+
+    // console.log('user : ', user);
+    let promptText = '';
+    const promptList = new LinkedNodes(nodes, edges);
+    promptText = promptList.generateModel();
+    const flowChartData = { name, nodes, edges, user, promptText };
+    // let flowchart = await Flowchart.findOne({ name });
+    //     if (!flowchart) {
+    //   flowchart = new Flowchart({ name, nodes, edges, user });
+    //   await flowchart.save();
+    // } else {
+    //   flowchart.nodes = nodes;
+    //   flowchart.edges = edges;
+    //   flowchart.user = user;
+    //   await flowchart.updateOne(flowchart);
+    // }
     const newFlowchart = await Flowchart.findOneAndUpdate(
-      { name: name },
+      { user, name },
       { $set: flowChartData },
       { new: true, upsert: true }
     );

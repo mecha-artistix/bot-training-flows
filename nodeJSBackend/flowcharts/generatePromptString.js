@@ -96,7 +96,7 @@ class LinkedNodes {
     return findId(this.head);
   }
 
-  append(data, parentId = null, branch = null) {
+  async append(data, parentId = null, branch = null) {
     if (!this.nodes[data.id]) {
       this.nodes[data.id] = new Node(data);
       this.length++;
@@ -113,7 +113,7 @@ class LinkedNodes {
     }
   }
 
-  makeConnectionsObj() {
+  async makeConnectionsObj() {
     for (let n = 0; n < this.nds.length; n++) {
       const node = this.nds[n];
 
@@ -151,7 +151,7 @@ class LinkedNodes {
     });
   }
 
-  generateModel() {
+  async generateModel() {
     this.modelPrompt = '';
     const tree = this.getTree();
     if (!tree) return;
