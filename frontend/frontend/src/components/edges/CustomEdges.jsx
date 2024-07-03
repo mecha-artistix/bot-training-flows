@@ -1,12 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { EdgeLabelRenderer, getSmoothStepPath, useStore } from "reactflow";
-import { getEdgeParams } from "../utils/getNodeIntersections";
-import adjustPath from "../utils/adjustPath";
-const edgeStyles = {
-  positive: { stroke: "green", strokeWidth: 2 },
-  negative: { stroke: "red", strokeWidth: 2 },
-  neutral: { stroke: "blue", strokeWidth: 2 },
-};
+import { getEdgeParams } from "../../utils/getNodeIntersections";
+import adjustPath from "../../utils/adjustPath";
 
 function Step_labelled_path({
   id,
@@ -27,9 +22,7 @@ function Step_labelled_path({
   const targetNode = useStore(
     useCallback((store) => store.nodeInternals.get(target), [target])
   );
-  // if (!sourceNode || !targetNode) {
-  //   return null;
-  // }
+
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
     sourceNode,
     targetNode
@@ -45,7 +38,6 @@ function Step_labelled_path({
 
   const handleExpanded = () => {
     setIsExpanded((isExpanded) => !isExpanded);
-    console.log(isExpanded);
   };
   const handleLabel = (e) => {
     setLabel(e.target.value);
@@ -204,11 +196,9 @@ function SmoothStepPath({
     sourcePosition: sourcePos,
     targetPosition: targetPos,
   });
-  // console.log("Initial Edge Path:", edgePath);
 
-  edgePath = adjustPath(edgePath, sourceX, sourceY, 50);
+  // edgePath = adjustPath(edgePath, sourceX, sourceY, 50);
 
-  // console.log("Adjusted Edge Path:", edgePath);
   return (
     <>
       <path

@@ -1,19 +1,18 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef } from 'react';
 import ReactFlow, {
   Background,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  useNodesState,
-  useEdgesState,
   isNode,
   isEdge,
   MarkerType,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import FloatingConnectionLine from "./FloatingConnectionLine.jsx";
-import { useNodesContext } from "../context/NodesContext.jsx";
-import { makeEdgeStyle } from "../utils/makeEdgeStyle.js";
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import FloatingConnectionLine from './FloatingConnectionLine.jsx';
+import { useNodesContext } from '../context/NodesContext.jsx';
+import { makeEdgeStyle } from '../utils/makeEdgeStyle.js';
+import useQuery from '../utils/useQuery.js';
 
 function FlowBoard() {
   const {
@@ -29,11 +28,14 @@ function FlowBoard() {
     edges,
     setEdges,
   } = useNodesContext();
+  const flowName = useQuery().get('flow');
+  const userID = localStorage.getItem('userID');
+
   const connectingNodeId = useRef(null);
   //  DRAG AND DROP COMPONENTS
   const onDragOver = useCallback((event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
   }, []);
 
   const onDrop = useCallback(
@@ -47,7 +49,7 @@ function FlowBoard() {
       const nodeId = `node-${nodes.length}`;
       const newNode = {
         id: nodeId,
-        type: "responsenode",
+        type: 'responsenode',
         position,
         data: { id: nodeId },
       };
@@ -57,24 +59,16 @@ function FlowBoard() {
     [reactFlowInstance, nodes, setNodes]
   );
   //  HANDLE CHANGES IN ELEMENTS
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
-  );
+  const onNodesChange = useCallback((changes) => setNodes((nds) => applyNodeChanges(changes, nds)), [setNodes]);
 
-  const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
-  );
+  const onEdgesChange = useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), [setEdges]);
 
   //  HANDLE CONDITIONAL CONNECTION LOGIC
   const isValidConnection = useCallback(
     (connection) => {
       const { source, target } = connection;
       // Check if there's already an edge with the same source and target
-      return !edges.some(
-        (edge) => edge.source === source && edge.target === target
-      );
+      return !edges.some((edge) => edge.source === source && edge.target === target);
     },
     [edges]
   );
@@ -86,7 +80,7 @@ function FlowBoard() {
   const onConnectEnd = useCallback(
     (event) => {
       if (connectingNodeId.current) return;
-      console.log(connectingNodeId, event);
+      // console.log(connectingNodeId, event);
 
       // const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
       // // console.log(source);
@@ -125,18 +119,18 @@ function FlowBoard() {
   const onConnect = useCallback((connection, event) => {
     const { source, target } = connection;
     if (source == target) return;
-    if (source == "start_node") {
+    if (source == 'start_node') {
       return setEdges((eds) =>
         addEdge(
           {
             ...connection,
-            type: "step_path",
-            style: { stroke: "green", strokeWidth: 2 },
+            type: 'step_path',
+            style: { stroke: 'green', strokeWidth: 2 },
             markerEnd: {
               type: MarkerType.ArrowClosed,
               width: 20,
               height: 20,
-              color: "green",
+              color: 'green',
             },
           },
           eds
@@ -150,7 +144,7 @@ function FlowBoard() {
     connectingNodeId.current = null;
     const edge = {
       ...connection,
-      type: "step_labelled",
+      type: 'step_labelled',
       data: { label },
       style: edgeStyle,
       markerEnd: { ...arrowHead },
@@ -158,11 +152,7 @@ function FlowBoard() {
 
     setEdges((eds) => {
       const filteredEdges = eds.filter(
-        (edge) =>
-          !(
-            edge.source === connection.source &&
-            edge.target === connection.target
-          )
+        (edge) => !(edge.source === connection.source && edge.target === connection.target)
       );
       return addEdge(edge, filteredEdges);
     });
@@ -174,9 +164,7 @@ function FlowBoard() {
       if (isNode(selectedElement)) {
         const nodeID = selectedElement.id;
         setNodes((nds) => nds.filter((node) => node.id !== selectedElement.id));
-        setEdges((eds) =>
-          eds.filter((edge) => edge.source !== nodeID && edge.target !== nodeID)
-        );
+        setEdges((eds) => eds.filter((edge) => edge.source !== nodeID && edge.target !== nodeID));
       } else if (isEdge(selectedElement)) {
         setEdges((eds) => eds.filter((edge) => edge.id !== selectedElement.id));
       }
@@ -184,16 +172,32 @@ function FlowBoard() {
     }
   }, [selectedElement]);
   // Event listener for the delete key
+
+  useEffect(() => {
+    async function fetchFlowChart() {
+      const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}?flow=${flowName}`);
+      if (!response.ok) throw new Error();
+      const responseObj = await response.json();
+      const flowchart = await responseObj.data.flowcharts;
+      // console.log('data from api ', flowchart);
+      if (flowchart.nodes.length > 0) {
+        setNodes((nds) => [...nds, ...flowchart.nodes]);
+        setEdges(flowchart.edges);
+      } else return;
+    }
+    fetchFlowChart();
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Delete") {
+      if (event.key === 'Delete') {
         deleteSelectedElement();
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [deleteSelectedElement]);
 

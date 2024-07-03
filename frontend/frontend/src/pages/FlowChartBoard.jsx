@@ -3,7 +3,6 @@ import { ReactFlowProvider } from "reactflow";
 import FlowBoard from "../components/FlowBoard";
 import { NodesProvider } from "../context/NodesContext";
 import DrawingControlsPanel from "../components/DrawingControlsPanel";
-const style = { height: "90vh", width: "90vw", border: "1px solid black" };
 
 function FlowChartBoard() {
   const reactFlowRef = useRef(null);
@@ -13,7 +12,7 @@ function FlowChartBoard() {
       <ReactFlowProvider>
         <NodesProvider reactFlowRef={reactFlowRef}>
           <DrawingControlsPanel />
-          <div ref={reactFlowRef} style={style} className="">
+          <div ref={reactFlowRef} className="flex-grow">
             <FlowBoard />
           </div>
         </NodesProvider>

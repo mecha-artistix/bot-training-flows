@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Handle, Position } from "reactflow";
 
-import HandlePair from "./HandlePair";
+import HandlePair from "../handles/HandlePair";
 
 function ActionNode({ data }) {
   const [text, setText] = useState(data.text || "Start");

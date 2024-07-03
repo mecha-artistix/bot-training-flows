@@ -1,4 +1,4 @@
-version: "3.8"
+# version: "3.8"
 
 services:
   db:
@@ -10,6 +10,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mongo:
+    image: mongo:latest
+    logging:
+      driver: none
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongo-data:/data/db
+
   backend:
     build:
       context: ./backend
@@ -19,7 +28,21 @@ services:
     depends_on:
       - db
     ports:
-      - "8000:8000"
+      - '8000:8000'
+
+  node-backend:
+    build:
+      context: ./nodeJSBackend
+      dockerfile: Dockerfile
+    volumes:
+      - ./nodeJSBackend:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+    env_file:
+      - ./nodeJSBackend/.env
 
   frontend:
     build:
@@ -28,7 +51,8 @@ services:
     volumes:
       - ./frontend/frontend:/app/frontend
     ports:
-      - "5173:5173"
+      - '5170:5170'
 
 volumes:
   postgres_data:
+  mongo-data:

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import HandlePair from "./HandlePair";
+import HandlePair from "../handles/HandlePair";
 
 export default function ResponseNode({ data }) {
   const [label, setLabel] = useState(data.label || data.id);

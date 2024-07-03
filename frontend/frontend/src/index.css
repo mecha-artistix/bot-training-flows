@@ -4,24 +4,34 @@
 
 /* global.css */
 
-/* Apply custom scrollbar styles globally */
-
-/* For WebKit-based browsers (Chrome, Safari, Edge) */
-::-webkit-scrollbar-corner {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-bg-color);
-}
-
-/* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-*::-webkit-scrollbar-track {
-  background: var(--scroll-bar-bg-color);
+@layer components {
+  .cwu_form_btn {
+    @apply bg-cwu_theme_orng text-white w-full py-1 rounded hover:bg-cwu_theme_orng_hover transition-all;
+  }
+  .cwu_magent_btn {
+    @apply bg-cwu_theme_orng_magenta rounded px-3 py-2 text-white;
+  }
+  .leftbar_nav a.active,
+  .leftbar_nav a:hover {
+    @apply text-cwu_theme_orng;
+  }
+  a {
+    @apply hover:underline cursor-pointer;
+  }
+  table {
+    @apply w-full text-sm text-left rtl:text-right text-gray-900;
+  }
+  thead {
+    @apply text-xs text-gray-700 uppercase bg-gray-100;
+  }
+  tr {
+    @apply hover:bg-gray-50;
+  }
+  tr a {
+    @apply text-cwu_theme_orng;
+  }
+  th,
+  td {
+    @apply border border-collapse first:w-2/4 py-2 px-1;
+  }
 }

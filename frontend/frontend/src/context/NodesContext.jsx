@@ -1,14 +1,8 @@
-import {
-  createContext,
-  useState,
-  useContext,
-  useCallback,
-  useEffect,
-} from "react";
-import { useNodesState, useEdgesState, isNode, isEdge } from "reactflow";
-import ResponseNode from "../components/ResponseNode";
-import { ActionNode, startNode } from "../components/ActionNode";
-import { Step_labelled_path, SmoothStepPath } from "../components/CustomEdges";
+import { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import { useNodesState, useEdgesState, isNode, isEdge } from 'reactflow';
+import ResponseNode from '../components/nodes/ResponseNode';
+import { ActionNode, startNode } from '../components/nodes/ActionNode';
+import { Step_labelled_path, SmoothStepPath } from '../components/edges/CustomEdges';
 // import { initNodes } from "../../data/initialNodes.js";
 // import { initEdges } from "../../data/initialEdges.js";
 
@@ -81,9 +75,7 @@ function NodesProvider({ children, reactFlowRef }) {
     nodeConnections,
   };
 
-  return (
-    <NodesContext.Provider value={values}>{children}</NodesContext.Provider>
-  );
+  return <NodesContext.Provider value={values}>{children}</NodesContext.Provider>;
 }
 function useNodesContext() {
   const context = useContext(NodesContext);
