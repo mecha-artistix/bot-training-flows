@@ -4,7 +4,7 @@ const Flowchart = require('../flowcharts/flowchartModel');
 const promptFileSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile', required: true },
   name: { type: String, required: true },
-  createdAt: { type: Data, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
   prompt: {
     promptText: { type: String },
     source: { type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart', default: null },
