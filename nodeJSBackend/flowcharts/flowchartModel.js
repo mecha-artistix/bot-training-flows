@@ -26,8 +26,8 @@ const flowChartSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   nodes: [nodeSchema],
   edges: [edgeSchema],
-  promptText: { type: String },
-  // promptText: [],
+  // promptText: { type: String },
+  promptText: { type: mongoose.Schema.Types.ObjectId, ref: 'PromptFile', required: false },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile', required: true },
 });
 

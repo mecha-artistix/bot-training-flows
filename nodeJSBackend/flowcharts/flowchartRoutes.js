@@ -6,7 +6,6 @@ const router = express.Router();
 // router.route('/:user').post(flowchartController.createFlowchart).get(flowchartController.getAllFlowcharts);
 router
   .route('/:user')
-  .post(flowchartController.createFlowchart)
   .get(flowchartController.getFlowcharts)
   .post(flowchartController.createFlowchart)
   .delete(flowchartController.deleteFlowchart);
