@@ -12,6 +12,7 @@ function reducer(state, action) {
   switch (action.type) {
     case 'success':
       localStorage.setItem('userID', action.payload.userID);
+      console.log('payload', action.payload);
       return { ...state, status: true, username: action.payload.username, userID: action.payload.userID };
     case 'failed':
       return initState;
@@ -60,7 +61,8 @@ export function AuthProvider({ children }) {
         },
         body: JSON.stringify(creds),
       });
-      const data = await response.json();
+      const resData = await response.json();
+      const data = resData.data;
       if (response.status === 201) {
         dispatch({ type: 'success', payload: { username: data.username, userID: data.userID } });
       } else {

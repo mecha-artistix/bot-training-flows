@@ -87,9 +87,9 @@ const BodyRow = ({ flowchart, handleDelete }) => {
       });
       if (!response.ok) throw new Error(`Error: ${response.message}`);
 
-      const data = await response.json();
+      // const data = await response.json();
       handleDelete(id);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error(error);
     }

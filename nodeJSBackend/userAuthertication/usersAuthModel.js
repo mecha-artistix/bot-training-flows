@@ -14,7 +14,7 @@ userAuthSchema.post('save', async function (doc, next) {
     // Create initial UserProfile with only the user field
     await UserProfile.create({
       user: doc._id,
-      basicInfo: { userName: doc.username },
+      basicInfo: { userName: doc.username, firstName: doc.firstName, lastName: doc.lastName },
       contactInfo: { email: doc.email },
     });
     next();

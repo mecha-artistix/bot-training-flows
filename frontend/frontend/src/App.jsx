@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import SignInSignUpUp from './pages/SignInSignUp';
+import UserLoginRegister from './pages/UserLoginRegister';
 import FlowChartBoard from './pages/FlowChartBoard';
 import LoginForm from './authentication/LoginForm';
 import RegisterForm from './authentication/RegisterForm';
@@ -21,7 +21,7 @@ function App() {
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
           <Routes>
-            <Route path={singIn_path} element={<SignInSignUpUp />}>
+            <Route path={singIn_path} element={<UserLoginRegister />}>
               <Route index element={<LoginForm />} />
               <Route path="register" element={<RegisterForm />} />
             </Route>

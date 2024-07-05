@@ -16,9 +16,9 @@ class Node {
 
 export class LinkedNodes {
   constructor(nds, eds) {
-    const startNodeData = nds.find((n) => n.id === "start_node");
+    const startNodeData = nds.find((n) => n.id === 'start_node');
     if (!startNodeData) {
-      throw new Error("Start node not found.");
+      throw new Error('Start node not found.');
     }
     this.head = new Node(startNodeData);
     this.nodes = { [this.head.id]: this.head };
@@ -33,7 +33,7 @@ export class LinkedNodes {
 
     this.nds = nds;
     this.eds = eds;
-    this.prompt = "";
+    this.prompt = '';
 
     this.makeConnectionsObj();
     this.generateModel();
@@ -111,18 +111,18 @@ export class LinkedNodes {
         const edg = connections[e];
         const nextNode = this.nds.find((n) => n.id === edg.target);
         nextNode.response = edg.data || nextNode.response;
-        nextNode.intention = "";
+        nextNode.intention = '';
 
-        let nextBranch = "";
+        let nextBranch = '';
         switch (edg.sourceHandle) {
-          case "r":
-            nextBranch = "negative";
+          case 'r':
+            nextBranch = 'negative';
             break;
-          case "g":
-            nextBranch = "positive";
+          case 'g':
+            nextBranch = 'positive';
             break;
           default:
-            nextBranch = "neutral";
+            nextBranch = 'neutral';
         }
         nextNode.intention = nextBranch;
         this.append(nextNode, node.id, nextBranch);
@@ -137,7 +137,7 @@ export class LinkedNodes {
   }
 
   generateModel() {
-    this.modelPrompt = "";
+    this.modelPrompt = '';
     const tree = this.getTree();
     if (!tree) return;
 
@@ -146,34 +146,20 @@ export class LinkedNodes {
     while (queue.length > 0) {
       let { node: current, parent } = queue.shift();
 
-      let parentId = parent && parent.id ? parent.id : "";
-      let parentResLabel =
-        parent && parent.data && parent.data.texts
-          ? parent.data.texts.join(", ")
-          : "";
+      let parentId = parent && parent.id ? parent.id : '';
+      let parentResLabel = parent && parent.data && parent.data.texts ? parent.data.texts.join(', ') : '';
 
       // Collect response labels and texts
-      let intention = current.intention ? current.intention : "";
-      let responseLabel =
-        current.response && current.response.label
-          ? current.response.label
-          : "";
-      let responseTexts =
-        current.response && current.response.inputs
-          ? current.response.inputs.join(", ")
-          : "";
-      let botText =
-        current.data && current.data.texts ? current.data.texts.join(", ") : "";
-      let botId = current.id ? current.id : "";
+      let intention = current.intention ? current.intention : '';
+      let responseLabel = current.response && current.response.label ? current.response.label : '';
+      let responseTexts = current.response && current.response.inputs ? current.response.inputs.join(', ') : '';
+      let botText = current.data && current.data.texts ? current.data.texts.join(', ') : '';
+      let botId = current.id ? current.id : '';
       // Add the collected texts to modelPrompt
       this.modelPrompt +=
-        (responseLabel.length > 0
-          ? `IF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n`
-          : "\n") +
-        (responseTexts.length > 0
-          ? `Other Examples --> ${responseTexts}\n`
-          : "\n") +
-        (botText.length > 0 ? `Then\n${botId} --> ${botText}\n` : "\n\n");
+        (responseLabel.length > 0 ? `IF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n` : '\n') +
+        (responseTexts.length > 0 ? `Other Examples --> ${responseTexts}\n` : '\n') +
+        (botText.length > 0 ? `Then\n${botId} --> ${botText}\n` : '\n\n');
 
       // this.modelPrompt +=
       //   responseLabel.length > 0
@@ -187,19 +173,11 @@ export class LinkedNodes {
       //   botText.length > 0 ? `Bot Response --> ${botText}\n\n\n\n` : "\n";
 
       // Enqueue children nodes
-      if (current.positive && current.positive.length > 0)
-        this.enqueueChildren(queue, current.positive, current);
-      if (current.negative && current.negative.length > 0)
-        this.enqueueChildren(queue, current.negative, current);
-      if (current.neutral && current.neutral.length > 0)
-        this.enqueueChildren(queue, current.neutral, current);
+      if (current.positive && current.positive.length > 0) this.enqueueChildren(queue, current.positive, current);
+      if (current.negative && current.negative.length > 0) this.enqueueChildren(queue, current.negative, current);
+      if (current.neutral && current.neutral.length > 0) this.enqueueChildren(queue, current.neutral, current);
     }
     // console.log(this.modelPrompt);
     return this.modelPrompt;
   }
 }
-
-// const list = new LinkedNodes(initNodes, initEdges);
-// const JsonList = JSON.stringify(list.getTree(), null);
-// console.log(JsonList);
-// console.log(list.modelPrompt);

@@ -175,15 +175,20 @@ function FlowBoard() {
 
   useEffect(() => {
     async function fetchFlowChart() {
-      const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}?flow=${flowName}`);
-      if (!response.ok) throw new Error();
-      const responseObj = await response.json();
-      const flowchart = await responseObj.data.flowcharts;
-      // console.log('data from api ', flowchart);
-      if (flowchart.nodes.length > 0) {
-        setNodes((nds) => [...nds, ...flowchart.nodes]);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}?flow=${flowName}`);
+        if (!response.ok) throw new Error();
+        const responseObj = await response.json();
+        const flowchart = await responseObj.data.flowcharts;
+        // console.log('data from api ', flowchart);
+        // if (flowchart.nodes.length) throw new Error()
+
+        // setNodes((nds) => [...nds, ...flowchart.nodes]);
+        setNodes(flowchart.nodes);
         setEdges(flowchart.edges);
-      } else return;
+      } catch (error) {
+        console.log(error);
+      }
     }
     fetchFlowChart();
   }, []);

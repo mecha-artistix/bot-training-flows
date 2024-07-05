@@ -7,7 +7,9 @@ const promptFileSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   prompt: {
     promptText: { type: String },
-    source: { type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart', default: null },
+    source: {
+      flowchart: { type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart', default: null },
+    },
   },
 });
 

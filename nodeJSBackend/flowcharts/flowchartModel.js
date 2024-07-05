@@ -2,23 +2,27 @@ const mongoose = require('mongoose');
 const LinkedNodes = require('./generatePromptString');
 
 const nodeSchema = new mongoose.Schema({
-  id: { type: String, required: true },
   type: { type: String },
   position: {
     x: { type: Number },
     y: { type: Number },
   },
   data: { type: mongoose.Schema.Types.Mixed },
+  width: { type: Number },
+  height: { type: Number },
+  id: { type: String, required: true },
 });
 
 const edgeSchema = new mongoose.Schema({
-  id: { type: String, required: true },
   source: { type: String, required: true },
   sourceHandle: { type: String },
   target: { type: String, required: true },
   targetHandle: { type: String },
   type: { type: String },
   data: { type: mongoose.Schema.Types.Mixed },
+  style: { type: mongoose.Schema.Types.Mixed },
+  markerEnd: { type: mongoose.Schema.Types.Mixed },
+  id: { type: String, required: true },
 });
 
 const flowChartSchema = new mongoose.Schema({
@@ -26,12 +30,22 @@ const flowChartSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   nodes: [nodeSchema],
   edges: [edgeSchema],
-  // promptText: { type: String },
-  promptText: { type: mongoose.Schema.Types.ObjectId, ref: 'PromptFile', required: false },
+  promptText: { type: String },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile', required: true },
 });
 
 // Middleware to fetch the document before update
+// flowChartSchema.post('save', async function (doc, next) {
+//   try {
+//     const { nodes, edges } = doc;
+//     const promptList = new LinkedNodes(nodes, edges);
+//     const promptText = promptList.generateModel();
+//     await Flowchart.findOneAndUpdate({ _id: doc._id }, { promptText });
+//     console.log(promptText);
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// });
 // flowChartSchema.post('save', async function (doc, next) {
 //   try {
 //     const { nodes, edges } = doc;

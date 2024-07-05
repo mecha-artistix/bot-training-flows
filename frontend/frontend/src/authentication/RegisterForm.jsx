@@ -7,12 +7,15 @@ function RegisterForm() {
   const navigate = useNavigate();
 
   const [creds, setCreds] = useState({
+    firstName: '',
+    lastName: '',
     username: '',
-    password: '',
     email: '',
+    password: '',
+    re_enter_password: '',
   });
   const [error, setError] = useState();
-
+  const { re_enter_password, ...registerCred } = creds;
   useEffect(() => {
     if (user.status) {
       navigate('/');
@@ -26,7 +29,7 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(creds);
+      await register(registerCred);
       if (!user.status) {
         setError('Invalid username or password');
       }
@@ -39,50 +42,98 @@ function RegisterForm() {
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold text-white" htmlFor="username">
+          <label className="mb-2 font-bold" htmlFor="firstName" hidden>
+            firstName
+          </label>
+          <input
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
+              error ? 'border-red-500' : ''
+            }`}
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="First Name"
+            value={creds.firstName}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-2 flex flex-col py-2">
+          <label className="mb-2 font-bold" htmlFor="lastName" hidden>
+            lastName
+          </label>
+          <input
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
+              error ? 'border-red-500' : ''
+            }`}
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="Last Name"
+            value={creds.lastName}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-2 flex flex-col py-2">
+          <label className="mb-2 font-bold" htmlFor="username" hidden>
             Username
           </label>
           <input
-            className={`rounded border p-2 text-base  placeholder-gray-400 focus:outline-none  ${
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
               error ? 'border-red-500' : ''
             }`}
             type="text"
             id="username"
             name="username"
-            placeholder="Enter Username"
+            placeholder="Username"
             value={creds.username}
             onChange={handleChange}
           />
         </div>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold text-white" htmlFor="username">
+          <label className="mb-2 font-bold" htmlFor="email" hidden>
             Email
           </label>
           <input
-            className={`rounded border p-2 text-base  placeholder-gray-400 focus:outline-none  ${
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
               error ? 'border-red-500' : ''
             }`}
             type="email"
             id="email"
             name="email"
-            placeholder="Enter Email"
+            placeholder="Email"
             value={creds.email}
             onChange={handleChange}
           />
         </div>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold text-white" htmlFor="password">
+          <label className="mb-2 font-bold" htmlFor="password" hidden>
             Password
           </label>
           <input
-            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none  ${
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
               error ? 'border-red-500' : ''
             }`}
             type="password"
             id="password"
             name="password"
-            placeholder="Enter Password"
+            placeholder="Password"
             value={creds.password}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-2 flex flex-col py-2">
+          <label className="mb-2 font-bold" htmlFor="re_enter_password" hidden>
+            re_enter_password
+          </label>
+          <input
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
+              error ? 'border-red-500' : ''
+            }`}
+            type="password"
+            id="re_enter_password"
+            name="re_enter_password"
+            placeholder="Re_enter Password"
+            value={creds.re_enter_password}
             onChange={handleChange}
           />
         </div>

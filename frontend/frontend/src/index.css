@@ -5,24 +5,27 @@
 /* global.css */
 
 @layer components {
+  /* #root {
+    @apply mx-auto w-[1280px];
+  } */
   .cwu_form_btn {
-    @apply bg-cwu_theme_orng text-white w-full py-1 rounded hover:bg-cwu_theme_orng_hover transition-all;
+    @apply w-full rounded bg-cwu_theme_orng py-1 text-white transition-all hover:bg-cwu_theme_orng_hover;
   }
   .cwu_magent_btn {
-    @apply bg-cwu_theme_orng_magenta rounded px-3 py-2 text-white;
+    @apply rounded bg-cwu_theme_orng_magenta px-3 py-2 text-white;
   }
   .leftbar_nav a.active,
   .leftbar_nav a:hover {
     @apply text-cwu_theme_orng;
   }
   a {
-    @apply hover:underline cursor-pointer;
+    @apply cursor-pointer hover:underline;
   }
   table {
-    @apply w-full text-sm text-left rtl:text-right text-gray-900;
+    @apply w-full text-left text-sm text-gray-900 rtl:text-right;
   }
   thead {
-    @apply text-xs text-gray-700 uppercase bg-gray-100;
+    @apply bg-gray-100 text-xs uppercase text-gray-700;
   }
   tr {
     @apply hover:bg-gray-50;
@@ -32,6 +35,6 @@
   }
   th,
   td {
-    @apply border border-collapse first:w-2/4 py-2 px-1;
+    @apply border-collapse border px-1 py-2 first:w-2/4;
   }
 }

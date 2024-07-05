@@ -1,3 +1,22 @@
+const fs = require('fs');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const UserProfile = require('../userProfile/UserProfileModel');
+const Flowchart = require('../flowcharts/flowchartModel');
+
+dotenv.config({ path: './.env' });
+
+const mongoUrl = process.env.DB_MONGO_URL;
+
+mongoose
+  .connect(mongoUrl)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.log('Error connecting to MongoDB:', err));
+
+// getUserProfile(userID);
+
+const userID = '667e8d470d16951275ebae90';
+
 class Node {
   constructor(data) {
     this.id = data.id;
@@ -82,8 +101,12 @@ class LinkedNodes {
   }
 }
 
+// const list = new LinkedNodes(initNodes, initEdges);
+// const JsonList = JSON.stringify(list.getTree(), null);
+// console.log(JsonList);
+// console.log(list.modelPrompt);
+
 function makeConnectionsObj(list, nodes, edges) {
-  if (!edges) return;
   for (let n = 0; n < nodes.length; n++) {
     const node = nodes[n];
 
@@ -142,11 +165,9 @@ const generateModel = (heads) => {
     // console.log(parentId, intention, responseTexts, botText, botId);
     // Add the collected texts to modelPrompt
     modelPrompt +=
-      (responseLabel.length > 0
-        ? `\n\nIF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n`
-        : '\n') +
+      (responseLabel.length > 0 ? `IF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n` : '\n') +
       (responseTexts.length > 0 ? `Other Examples --> ${responseTexts}\n` : '\n') +
-      (botText.length > 0 ? `Then ${botId} --> ${botText}\n` : '\n\n');
+      (botText.length > 0 ? `Then\n${botId} --> ${botText}\n` : '\n\n');
 
     // Enqueue children nodes
     if (current.positive && current.positive.length > 0) enqueueChildren(queue, current.positive, current);
@@ -157,9 +178,103 @@ const generateModel = (heads) => {
   return modelPrompt;
 };
 
-module.exports = { LinkedNodes, makeConnectionsObj, generateModel };
+async function fetchFlowchartData() {
+  try {
+    const flowcharts = await Flowchart.find({ user: userID, name: 'test' });
+    const nodes = flowcharts[0].nodes;
+    const edges = flowcharts[0].edges;
+    // console.log(nodes, edges);
+    // return { nodes: flowcharts[0].nodes, edges: flowcharts[0].edges };
+    const list = new LinkedNodes();
+    makeConnectionsObj(list, nodes, edges);
+    const connectedList = list.getTree();
+    // console.log(connectedList);
+    const prompt = generateModel(connectedList);
+    console.log(prompt);
+  } catch (err) {
+    console.error('Failed to fetch flowchart:', err);
+    throw err; // Propagate the error if needed
+  }
+}
+fetchFlowchartData();
 
-// const list = new LinkedNodes(initNodes, initEdges);
-// const JsonList = JSON.stringify(list.getTree(), null);
-// console.log(JsonList);
-// console.log(list.modelPrompt);
+// async function getUserProfile(userID) {
+//   try {
+//     const userProfile = await UserProfile.find({ user: userID });
+//     console.log(userProfile);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
+// let nodes = [];
+// let edges = [];
+
+// (async () => {
+//   try {
+//     const flowcharts = await fetchFlowchartData();
+//     nodes = [...flowcharts[0].nodes];
+//     edges = [...flowcharts[0].edges];
+//     console.log(nodes, edges);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// })();
+// console.log(nodes, edges);
+// async function getFlowchart() {
+//   try {
+//     const flowcharts = await Flowchart.find({ user: userID, name: 'zzz' });
+//     nodes = await [...flowcharts[0].nodes];
+//     edges = await [...flowcharts[0].edges];
+//     // { nodes, edges } = {flowcharts[0]};
+//     // const flowchart = { nodes, edges };
+//     // console.log(flowcharts[0]);
+//     return flowcharts[0];
+
+//     // console.log(flowchart);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
+// await getFlowchart();
+
+/*
+
+function generateModel(heads) {
+  this.modelPrompt = '';
+  const tree = this.getTree();
+  console.log(tree);
+  if (!tree) return;
+
+  let queue = [{ node: tree, parent: null }];
+
+  while (queue.length > 0) {
+    let { node: current, parent } = queue.shift();
+    let parentId = parent && parent.id ? parent.id : '';
+    let parentResLabel = parent && parent.data && parent.data.texts ? parent.data.texts.join(', ') : '';
+
+    // Collect response labels and texts
+    let intention = current.intention ? current.intention : '';
+    let responseLabel = current.response && current.response.label ? current.response.label : '';
+    let responseTexts = current.response && current.response.inputs ? current.response.inputs.join(', ') : '';
+    let botText = current.data && current.data.texts ? current.data.texts.join(', ') : '';
+    let botId = current.id ? current.id : '';
+    // Add the collected texts to modelPrompt
+    this.modelPrompt +=
+      (responseLabel.length > 0 ? `IF Respond ${intention}ly to ${parentId} for example ${responseLabel}\n` : '\n') +
+      (responseTexts.length > 0 ? `Other Examples --> ${responseTexts}\n` : '\n') +
+      (botText.length > 0 ? `Then\n${botId} --> ${botText}\n` : '\n\n');
+
+    // this.modelPrompt += responseLabel.length > 0 ? `Response to --> ${parentId}\n > ${responseLabel}\n` : '\n';
+    // this.modelPrompt += responseTexts.length > 0 ? `Response Examples --> ${responseTexts}\n` : '\n';
+    // this.modelPrompt += botText.length > 0 ? `Bot Response --> ${botText}\n\n\n\n` : '\n';
+
+    // Enqueue children nodes
+    if (current.positive && current.positive.length > 0) this.enqueueChildren(queue, current.positive, current);
+    if (current.negative && current.negative.length > 0) this.enqueueChildren(queue, current.negative, current);
+    if (current.neutral && current.neutral.length > 0) this.enqueueChildren(queue, current.neutral, current);
+  }
+  // console.log(this.modelPrompt);
+  return this.modelPrompt;
+}
+
+*/

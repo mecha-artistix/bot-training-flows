@@ -29,16 +29,18 @@ function DrawingControlsPanel() {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
-  function updatePrompt() {
-    const list = new LinkedNodes(nodes, edges);
-    list.generateModel();
-    setPrompt(list.generateModel());
-  }
 
-  useEffect(() => {
-    updatePrompt();
-  }, [nodes, edges]);
-  async function handleSaveFLow() {
+  // function updatePrompt() {
+  //   const list = new LinkedNodes(nodes, edges);
+  //   list.generateModel();
+  //   setPrompt(list.generateModel());
+  // }
+
+  // useEffect(() => {
+  //   updatePrompt();
+  // }, [nodes, edges]);
+
+  async function saveFlow() {
     try {
       const response = await fetch(import.meta.env.VITE_NODE_BASE_API + `flowcharts/${userID}`, {
         method: 'POST',
@@ -54,15 +56,23 @@ function DrawingControlsPanel() {
       });
       if (!response.ok) throw new Error();
       const data = await response.json();
-      console.log(data);
+      return data;
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleViewPrompt() {
+  const handleSaveFLow = async () => {
+    await saveFlow();
+  };
+
+  const handleViewPrompt = async () => {
+    saveFlow().then((res) => setPrompt(res.flowchart.promptText));
+
     setViewPrompt((viewPrompt) => !viewPrompt);
-  }
+    // console.log(saveFlow());
+    // setPrompt(saveFlow().flowchart.promptText);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {

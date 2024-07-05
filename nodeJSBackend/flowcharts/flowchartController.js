@@ -1,16 +1,19 @@
 const Flowchart = require('./flowchartModel');
 const UserProfile = require('../userProfile/UserProfileModel');
-const LinkedNodes = require('./generatePromptString');
+const { LinkedNodes, makeConnectionsObj, generateModel } = require('./generatePromptString');
 
 exports.createFlowchart = async (req, res) => {
   try {
     const { name, nodes, edges, user } = req.body;
 
     // Generate promptText
-    const promptList = new LinkedNodes(nodes, edges);
-    const promptText = await promptList.generateModel();
+    const promptList = new LinkedNodes();
+    makeConnectionsObj(promptList, nodes, edges);
+    const promptConnectedList = promptList.getTree();
+    // console.log(connectedList);
+    const promptText = generateModel(promptConnectedList);
 
-    const flowChartData = { name, nodes, edges, promptText, user };
+    const flowChartData = { name, nodes, edges, user, promptText };
 
     const newFlowchart = await Flowchart.findOneAndUpdate(
       { user, name },
@@ -33,57 +36,10 @@ exports.createFlowchart = async (req, res) => {
     res.status(500).json({
       status: 'failed',
       message: error.message,
+      stack: error.stack,
     });
   }
 };
-
-// exports.createFlowchart = async (req, res) => {
-//   try {
-//     const { name, nodes, edges, user } = req.body;
-//     console.log('user:', user);
-
-//     // Find the user
-//     const userProfile = await UserProfile.findById(user).populate('flowcharts');
-
-//     if (!userProfile) {
-//       return res.status(404).json({
-//         status: 'failed',
-//         message: 'User not found',
-//       });
-//     }
-
-//     // Check if a flowchart with the same name exists within the user's flowcharts
-//     let flowchart = userProfile.flowcharts.find((fc) => fc.name === name);
-
-//     if (flowchart) {
-//       // Update existing flowchart
-//       flowchart.nodes = nodes;
-//       flowchart.edges = edges;
-//       flowchart.user = user;
-//     } else {
-//       // Create a new flowchart
-//       flowchart = new Flowchart({ name, nodes, edges, user });
-//       userProfile.flowcharts.push(flowchart);
-//     }
-
-//     // Save the flowchart (triggers pre('save') middleware)
-//     await flowchart.save();
-
-//     // Save the user profile to update the flowcharts array
-//     await userProfile.save();
-
-//     res.status(201).json({
-//       status: 'created',
-//       message: 'Flowchart created successfully',
-//       flowchart,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       status: 'failed',
-//       message: error.message,
-//     });
-//   }
-// };
 
 exports.getFlowcharts = async (req, res) => {
   const { user } = req.params;
@@ -102,7 +58,7 @@ exports.getFlowcharts = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      length: flowcharts.length,
+      // results: flowcharts.length,
       data: {
         flowcharts,
       },
@@ -111,6 +67,7 @@ exports.getFlowcharts = async (req, res) => {
     res.status(500).json({
       status: 'failed',
       message: error.message,
+      stack: error.stack,
     });
   }
 };
@@ -124,7 +81,7 @@ exports.deleteFlowchart = async (req, res) => {
     let flowcharts;
     const deletedFlowchart = await Flowchart.deleteOne({ _id: { $in: userProfile.flowcharts }, _id: req.query.id });
     await UserProfile.updateOne({ _id: userProfile._id }, { $pull: { flowcharts: deletedFlowchart._id } });
-    res.json({ message: 'Flowchart deleted' });
+    res.status(204).json({ message: 'Flowchart deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

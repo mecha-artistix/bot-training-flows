@@ -16,8 +16,10 @@ exports.deleteProfile = async (req, res, next) => {
 // controllers
 
 exports.createUser = async (req, res) => {
+  const { username, password, email } = req.body;
   try {
-    const newUser = UserAuth.create(req.body);
+    const newUser = await UserAuth.create({ username, password, email });
+    console.log('newUser =', newUser);
     res.status(201).json({
       status: 'created',
       message: 'user registered',

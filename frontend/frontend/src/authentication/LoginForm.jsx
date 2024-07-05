@@ -38,7 +38,7 @@ function LoginForm() {
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold text-white" htmlFor="username">
+          <label className="mb-2 font-bold " htmlFor="username">
             Username
           </label>
           <input
@@ -54,7 +54,7 @@ function LoginForm() {
           />
         </div>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold text-white" htmlFor="password">
+          <label className="mb-2 font-bold " htmlFor="password">
             Password
           </label>
           <input
