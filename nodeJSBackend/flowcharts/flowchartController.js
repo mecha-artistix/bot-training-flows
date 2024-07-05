@@ -10,7 +10,6 @@ exports.createFlowchart = async (req, res) => {
     const promptList = new LinkedNodes();
     makeConnectionsObj(promptList, nodes, edges);
     const promptConnectedList = promptList.getTree();
-    // console.log(connectedList);
     const promptText = generateModel(promptConnectedList);
 
     const flowChartData = { name, nodes, edges, user, promptText };

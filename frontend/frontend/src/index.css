@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* global.css */
 
 @layer components {
@@ -9,14 +11,14 @@
     @apply mx-auto w-[1280px];
   } */
   .cwu_form_btn {
-    @apply w-full rounded bg-cwu_theme_orng py-1 text-white transition-all hover:bg-cwu_theme_orng_hover;
+    @apply bg-secondry hover:bg-secondry_act w-full rounded py-1 text-white transition-all;
   }
   .cwu_magent_btn {
-    @apply rounded bg-cwu_theme_orng_magenta px-3 py-2 text-white;
+    @apply bg-accent rounded px-3 py-2 text-white;
   }
   .leftbar_nav a.active,
   .leftbar_nav a:hover {
-    @apply text-cwu_theme_orng;
+    @apply text-accent;
   }
   a {
     @apply cursor-pointer hover:underline;
@@ -31,10 +33,19 @@
     @apply hover:bg-gray-50;
   }
   tr a {
-    @apply text-cwu_theme_orng;
+    @apply text-secondry;
   }
   th,
   td {
     @apply border-collapse border px-1 py-2 first:w-2/4;
+  }
+  nav ul li {
+    @apply flex space-x-2;
+  }
+  .gray_icon {
+    @apply cursor-pointer text-neutral-500;
+  }
+  .nav-icon {
+    @apply text-accent size-6 cursor-pointer;
   }
 }

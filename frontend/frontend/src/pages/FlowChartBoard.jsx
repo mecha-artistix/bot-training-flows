@@ -1,8 +1,8 @@
-import { useRef } from "react";
-import { ReactFlowProvider } from "reactflow";
-import FlowBoard from "../components/FlowBoard";
-import { NodesProvider } from "../context/NodesContext";
-import DrawingControlsPanel from "../components/DrawingControlsPanel";
+import { useEffect, useRef } from 'react';
+import { ReactFlowProvider } from 'reactflow';
+import FlowBoard from '../components/FlowBoard';
+import { NodesProvider } from '../context/NodesContext';
+import DrawingControlsPanel from '../components/DrawingControlsPanel';
 
 function FlowChartBoard() {
   const reactFlowRef = useRef(null);

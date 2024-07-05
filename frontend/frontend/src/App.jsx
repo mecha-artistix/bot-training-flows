@@ -40,13 +40,13 @@ function AuthenticatedApp() {
 
   return (
     <>
-      <div className="w-full flex mx-auto h-screen items-stretch">
-        <header className="w-1/6 bg-cwu_theme_orng_magenta">
+      <div className="mx-auto flex h-screen w-full items-stretch">
+        <header className="w-1/6">
           <LeftPanel />
         </header>
-        <main className="flex flex-col w-full">
+        <main className="flex w-full flex-col">
           <Header />
-          <section className="flex-grow flex flex-col py-2 px-2">
+          <section className="flex flex-grow flex-col px-2 py-2">
             <Routes>
               {/* <Route path={`/`} element={<UserSpecificRoutes />} /> */}
               <Route index element={<FlowCharts />} />

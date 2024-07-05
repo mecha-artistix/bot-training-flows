@@ -25,20 +25,22 @@ function Header() {
           }),
         });
         if (!response.ok) throw new Error(response);
+        else navigate(`/create-flowchart?flow=${flowName}`);
       } catch (error) {
         console.log(error.message);
       }
     }
     createFlowInstance();
-    navigate(`/create-flowchart?flow=${flowName}`);
+    // navigate(`/create-flowchart?flow=${flowName}`);
     setPopup(false);
+    setFlowName('');
   }
   return (
-    <div className="py-2 px-2 flex items-center justify-between border-cwu_dk_charcoal border-b-2">
+    <div className="border-primary flex items-center justify-between border-b-2 px-2 py-2">
       <div className="relative p-0">
         <button onClick={handleClick}>Create New Flow +</button>
         {popup && (
-          <div className="absolute left-0 translate-y-10 py-10 px-10 z-50 bg-gray-400 top-0 flex ">
+          <div className="absolute left-0 top-0 z-50 flex translate-y-10 bg-gray-400 px-10 py-10">
             <input
               type="text"
               placeholder="Set Flow Name"

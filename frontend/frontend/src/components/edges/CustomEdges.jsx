@@ -1,32 +1,16 @@
-import { useState, useCallback, useEffect } from "react";
-import { EdgeLabelRenderer, getSmoothStepPath, useStore } from "reactflow";
-import { getEdgeParams } from "../../utils/getNodeIntersections";
-import adjustPath from "../../utils/adjustPath";
+import { useState, useCallback, useEffect } from 'react';
+import { EdgeLabelRenderer, getSmoothStepPath, useStore } from 'reactflow';
+import { getEdgeParams } from '../../utils/getNodeIntersections';
+import adjustPath from '../../utils/adjustPath';
 
-function Step_labelled_path({
-  id,
-  source,
-  sourceX,
-  sourceY,
-  target,
-  style,
-  markerEnd,
-  data,
-}) {
-  const [label, setLabel] = useState(data.label || "");
-  const [inputs, setInputs] = useState(data.inputs || [""]);
+function Step_labelled_path({ id, source, sourceX, sourceY, target, style, markerEnd, data }) {
+  const [label, setLabel] = useState(data.label || '');
+  const [inputs, setInputs] = useState(data.inputs || ['']);
   const [isExpanded, setIsExpanded] = useState(false);
-  const sourceNode = useStore(
-    useCallback((store) => store.nodeInternals.get(source), [source])
-  );
-  const targetNode = useStore(
-    useCallback((store) => store.nodeInternals.get(target), [target])
-  );
+  const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
+  const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
-    sourceNode,
-    targetNode
-  );
+  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -64,45 +48,27 @@ function Step_labelled_path({
     <>
       <path
         id={`${id}-invisible`}
-        style={{ ...style, stroke: "transparent", strokeWidth: 10 }}
+        style={{ ...style, stroke: 'transparent', strokeWidth: 10 }}
         className="react-flow__edge-path"
         d={edgePath}
       />
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
       <EdgeLabelRenderer>
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
-            pointerEvents: "all",
+            pointerEvents: 'all',
           }}
-          className="nodrag nopan bg-cwu_brown border p-2"
+          className="nodrag nopan border bg-cwu_brown p-2"
         >
-          <input
-            className="text-xs"
-            value={label}
-            onChange={(e) => handleLabel(e)}
-          ></input>
+          <input className="text-xs" value={label} onChange={(e) => handleLabel(e)}></input>
           <div>
-            <button
-              className="text-pink bg-cwu_dk_charcoal text-white px-1 rounded-sm text-xs"
-              onClick={handleExpanded}
-            >
+            <button className="text-pink bg-primary rounded-sm px-1 text-xs text-white" onClick={handleExpanded}>
               Add More
             </button>
             {isExpanded && (
-              <PathInputs
-                inputs={inputs}
-                setInputs={setInputs}
-                setIsExpanded={setIsExpanded}
-                handleAdd={handleAdd}
-              />
+              <PathInputs inputs={inputs} setInputs={setInputs} setIsExpanded={setIsExpanded} handleAdd={handleAdd} />
             )}
           </div>
         </div>
@@ -113,7 +79,7 @@ function Step_labelled_path({
 
 function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
   const handleAddInput = (index) => {
-    setInputs((prevInputs) => [...prevInputs, ""]);
+    setInputs((prevInputs) => [...prevInputs, '']);
   };
   const handleRemoveInput = (index) => {
     setInputs((prev) => prev.slice(0, -1));
@@ -128,8 +94,8 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
 
   return (
     <div
-      className={`bg-white absolute border border-black p-2 rounded animate-slideDown z-40 ${
-        isExpanded ? "animate-slideDown" : "animate-slideUp"
+      className={`absolute z-40 animate-slideDown rounded border border-black bg-white p-2 ${
+        isExpanded ? 'animate-slideDown' : 'animate-slideUp'
       }`}
     >
       <div>
@@ -137,7 +103,7 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
           return (
             <div key={index}>
               <input
-                className="px-1 text-xs border rounded-sm border-cwu_dk_charcoal focus:outline-none"
+                className="border-primary rounded-sm border px-1 text-xs focus:outline-none"
                 onChange={(e) => onInputChange(e, index)}
                 value={value}
               ></input>
@@ -145,19 +111,13 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
           );
         })}
         <span className="flex justify-between">
-          <button
-            className="bg-slate-400 rounded-full text-xs"
-            onClick={handleAddInput}
-          >
+          <button className="rounded-full bg-slate-400 text-xs" onClick={handleAddInput}>
             +
           </button>
-          <button onClick={handleAdd} className="text-xs border border-black">
+          <button onClick={handleAdd} className="border border-black text-xs">
             Add
           </button>
-          <button
-            className="bg-slate-400 rounded-full text-xs"
-            onClick={handleRemoveInput}
-          >
+          <button className="rounded-full bg-slate-400 text-xs" onClick={handleRemoveInput}>
             -
           </button>
         </span>
@@ -168,26 +128,11 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
 
 // ------------------ Smooth Step Path -----------------------------//
 
-function SmoothStepPath({
-  id,
-  source,
-  sourceX,
-  sourceY,
-  target,
-  style,
-  markerEnd,
-}) {
-  const sourceNode = useStore(
-    useCallback((store) => store.nodeInternals.get(source), [source])
-  );
-  const targetNode = useStore(
-    useCallback((store) => store.nodeInternals.get(target), [target])
-  );
+function SmoothStepPath({ id, source, sourceX, sourceY, target, style, markerEnd }) {
+  const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
+  const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
-    sourceNode,
-    targetNode
-  );
+  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
   let [edgePath] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -201,13 +146,7 @@ function SmoothStepPath({
 
   return (
     <>
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
     </>
   );
 }
@@ -228,15 +167,15 @@ function getAdjustedStepPath({
   path.push(`M${sourceX},${sourceY}`);
 
   // Add initial horizontal line immediately after starting
-  if (sourcePosition === "right") {
+  if (sourcePosition === 'right') {
     path.push(`H${sourceX + horizontalSpacing}`);
     // Move vertically to align with target's y-coordinate
     path.push(`V${targetY}`);
-  } else if (sourcePosition === "left") {
+  } else if (sourcePosition === 'left') {
     path.push(`H${sourceX - horizontalSpacing}`);
     // Move vertically to align with target's y-coordinate
     path.push(`V${targetY}`);
-  } else if (sourcePosition === "top" || sourcePosition === "bottom") {
+  } else if (sourcePosition === 'top' || sourcePosition === 'bottom') {
     // For top and bottom, adjust horizontally first
     const midX = (sourceX + targetX) / 2;
     path.push(`H${midX}`);
@@ -248,12 +187,12 @@ function getAdjustedStepPath({
   }
 
   // Final horizontal segment to the target x-coordinate
-  if (targetPosition === "right" || targetPosition === "left") {
+  if (targetPosition === 'right' || targetPosition === 'left') {
     path.push(`H${targetX}`);
   }
 
   // Join all path commands into a single string
-  return path.join(" ");
+  return path.join(' ');
 }
 //--------------------- Utility function to determine the closest point on a node's boundary
 

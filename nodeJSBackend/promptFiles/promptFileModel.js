@@ -15,19 +15,19 @@ const promptFileSchema = new mongoose.Schema({
 
 const PromptFile = mongoose.model('PromptFile', promptFileSchema);
 
-module.exports = PromptFile;
+// promptFileSchema.post('save', async function (doc, next) {
+//   try {
+//     if (doc.prompt.source)
+//       await Flowchart.findOneAndUpdate(
+//         { _id: doc.prompt.source, user: doc.user },
+//         { promptText: doc._id },
+//         { new: true, upsert: true }
+//       );
+//     next();
+//   } catch (error) {
+//     console.log(error.message);
+//     next(error);
+//   }
+// });
 
-promptFileSchema.post('save', async function (doc, next) {
-  try {
-    if (doc.prompt.source)
-      await Flowchart.findOneAndUpdate(
-        { _id: doc.prompt.source, user: doc.user },
-        { promptText: doc._id },
-        { new: true, upsert: true }
-      );
-    next();
-  } catch (error) {
-    console.log(error.message);
-    next(error);
-  }
-});
+module.exports = PromptFile;

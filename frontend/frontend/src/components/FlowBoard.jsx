@@ -56,7 +56,7 @@ function FlowBoard() {
 
       setNodes((nds) => [...nds, newNode]);
     },
-    [reactFlowInstance, nodes, setNodes]
+    [reactFlowInstance, nodes, setNodes],
   );
   //  HANDLE CHANGES IN ELEMENTS
   const onNodesChange = useCallback((changes) => setNodes((nds) => applyNodeChanges(changes, nds)), [setNodes]);
@@ -70,7 +70,7 @@ function FlowBoard() {
       // Check if there's already an edge with the same source and target
       return !edges.some((edge) => edge.source === source && edge.target === target);
     },
-    [edges]
+    [edges],
   );
 
   const onConnectStart = useCallback((_, { nodeId }) => {
@@ -113,7 +113,7 @@ function FlowBoard() {
       //   setEdges((eds) => addEdge(newEdge, eds));
       // }
     },
-    [nodes.length, reactFlowInstance, setNodes, setEdges]
+    [nodes.length, reactFlowInstance, setNodes, setEdges],
   );
 
   const onConnect = useCallback((connection, event) => {
@@ -133,8 +133,8 @@ function FlowBoard() {
               color: 'green',
             },
           },
-          eds
-        )
+          eds,
+        ),
       );
     }
     const { label, edgeStyle, arrowHead } = makeEdgeStyle(connection);
@@ -152,7 +152,7 @@ function FlowBoard() {
 
     setEdges((eds) => {
       const filteredEdges = eds.filter(
-        (edge) => !(edge.source === connection.source && edge.target === connection.target)
+        (edge) => !(edge.source === connection.source && edge.target === connection.target),
       );
       return addEdge(edge, filteredEdges);
     });
@@ -191,7 +191,7 @@ function FlowBoard() {
       }
     }
     fetchFlowChart();
-  }, []);
+  }, [flowName]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {

@@ -3,12 +3,18 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        theme_logo: ['Press Start 2P'],
+      },
       colors: {
-        cwu_dk_charcoal: 'rgba(51, 51, 51, 1)',
-        cwu_theme_orng: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
-        cwu_theme_orng_hover: 'rgba(28, 119, 246, 0.8)',
-        cwu_theme_orng_magenta: 'rgba(95, 74, 140, 1)', //rgba(63, 62, 79, 1)
-        cwu_brown: 'rgba(189, 178, 178, 1)',
+        primary: 'rgba(95, 74, 140, 1)',
+        secondry: 'rgba(40, 17, 89, 1)', // rgba(28, 119, 246, 1)
+        secondry_act: 'rgba(40, 17, 89, .85)', // rgba(28, 119, 246, 1)
+        accent: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
+        // cwu_theme_orng: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
+        // cwu_theme_orng_hover: 'rgba(28, 119, 246, 0.8)',
+        // cwu_theme_orng_magenta: 'rgba(95, 74, 140, 1)', //rgba(63, 62, 79, 1)
+        // cwu_brown: 'rgba(189, 178, 178, 1)',
       },
       keyframes: {
         popIn: {

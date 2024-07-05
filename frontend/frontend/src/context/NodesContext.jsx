@@ -54,9 +54,12 @@ function NodesProvider({ children, reactFlowRef }) {
 
     setCoords({ x: position.x, y: position.y });
   };
-  useEffect(() => {
-    console.log('nodes > ', nodes, 'edges > ', edges);
-  }, [nodes, edges]);
+
+  // // loggin nodes and edges for debugging
+  // useEffect(() => {
+  //   console.log('nodes > ', nodes, 'edges > ', edges);
+  // }, [nodes, edges]);
+
   const values = {
     reactFlowRef,
     nodeTypes,

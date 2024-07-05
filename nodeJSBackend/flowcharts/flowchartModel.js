@@ -35,17 +35,20 @@ const flowChartSchema = new mongoose.Schema({
 });
 
 // Middleware to fetch the document before update
-// flowChartSchema.post('save', async function (doc, next) {
+// flowChartSchema.pre('findOneAndUpdate', async function (next) {
 //   try {
-//     const { nodes, edges } = doc;
-//     const promptList = new LinkedNodes(nodes, edges);
-//     const promptText = promptList.generateModel();
-//     await Flowchart.findOneAndUpdate({ _id: doc._id }, { promptText });
-//     console.log(promptText);
+//     console.log(this.qetQuery);
+//     // const { promptText } = doc;
+
+//     // await PromptFile.findOneAndUpdate({ _id: doc._id }, { promptText });
+//     // console.log(promptText);
 //   } catch (error) {
 //     console.log(error.message);
+//     next(error.message);
 //   }
+//   next();
 // });
+
 // flowChartSchema.post('save', async function (doc, next) {
 //   try {
 //     const { nodes, edges } = doc;
@@ -86,8 +89,6 @@ const flowChartSchema = new mongoose.Schema({
 //     next(error);
 //   }
 // });
+
 const Flowchart = mongoose.model('Flowchart', flowChartSchema);
 module.exports = Flowchart;
-
-// const list = new LinkedNodes(this.nodes, this.edges);
-// this.promptText = await list.generateModel();
