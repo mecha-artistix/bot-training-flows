@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        theme_logo: ['Press Start 2P'],
+        theme_logo: ['PressStart2P-Regular'],
       },
       colors: {
         primary: 'rgba(95, 74, 140, 1)',

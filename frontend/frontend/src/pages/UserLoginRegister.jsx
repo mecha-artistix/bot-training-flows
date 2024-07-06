@@ -19,14 +19,14 @@ function UserLoginRegister() {
 
         <section className="flex flex-1 flex-col items-center space-y-8 lg:h-[60vh]">
           <div className="flex flex-col items-center">
-            <h2 className="text-primary mb-1 flex h-2/5 items-center text-[64px] font-bold">Creative Bot</h2>
+            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-4xl text-primary">Creative Bot</h2>
             <p className="tracking-[.5rem]">24/7 at Your Service!</p>
           </div>
           <img src={loginPageImage} className="w-2/3" loading="lazy" />
         </section>
 
         {/* RIGHT SECTION */}
-        <section className="mx-4 flex flex-1 flex-col items-stretch space-y-5 lg:h-[60vh]">
+        <section className="mx-4 flex flex-1 flex-col items-stretch space-y-5">
           {/* <div className="flex-grow flex flex-col mx-4 size-1/2 rounded bg-accent_magenta p-6 px-6 py-8 shadow-lg"> */}
           <div className="flex flex-col">
             <h2 className="mb-1 text-4xl font-bold">

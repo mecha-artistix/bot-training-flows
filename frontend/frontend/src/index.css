@@ -1,20 +1,24 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 /* global.css */
+
+@font-face {
+  font-family: 'PressStart2P-Regular';
+  src: local('PressStart2P-Regular'), url('./assets/fonts/PressStart2P-Regular.ttf'), format('truetype');
+}
 
 @layer components {
   /* #root {
     @apply mx-auto w-[1280px];
   } */
   .cwu_form_btn {
-    @apply bg-secondry hover:bg-secondry_act w-full rounded py-1 text-white transition-all;
+    @apply w-full rounded bg-secondry py-1 text-white transition-all hover:bg-secondry_act;
   }
   .cwu_magent_btn {
-    @apply bg-accent rounded px-3 py-2 text-white;
+    @apply rounded bg-accent px-3 py-2 text-white;
   }
   .leftbar_nav a.active,
   .leftbar_nav a:hover {
@@ -46,6 +50,6 @@
     @apply cursor-pointer text-neutral-500;
   }
   .nav-icon {
-    @apply text-accent size-6 cursor-pointer;
+    @apply size-6 cursor-pointer text-accent;
   }
 }
