@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function ImportTextFile() {
   const [fileContent, setFileContent] = useState({
@@ -7,7 +8,7 @@ function ImportTextFile() {
   });
   //   const [fileText, setFileText] = useState('');s
   const userID = localStorage.getItem('userID');
-
+  const navigate = useNavigate();
   const handleFileRead = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -39,6 +40,7 @@ function ImportTextFile() {
       });
       const data = await response.json();
       console.log('File submitted successfully:', data);
+      navigate('/knowledgebase');
     } catch (error) {
       console.error('Error submitting file:', error.message);
     }
@@ -46,9 +48,9 @@ function ImportTextFile() {
 
   useEffect(() => {
     if (fileContent.fileBody) {
-      handleSubmit(); // Call handleSubmit when fileContent.fileBody is updated
+      handleSubmit();
     }
-  }, [fileContent]); // Run effect when fileContent changes
+  }, [fileContent]);
 
   return (
     <div>
