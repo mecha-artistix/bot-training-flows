@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { formatDate } from '../utils/formatDate';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ShareIcon from '../assets/icons/ShareIcon';
 import EditIcon from '../assets/icons/EditIcon';
 import DeleteIcon from '../assets/icons/DeleteIcon';
@@ -76,7 +76,7 @@ const Body = ({ flowcharts, handleDelete }) => {
 
 const BodyRow = ({ flowchart, handleDelete }) => {
   const { name, createdAt } = flowchart;
-
+  const navigate = useNavigate();
   function handleGoToFlowchart() {
     async function navToFlowchart(params) {
       const response = await fetch();
@@ -108,7 +108,7 @@ const BodyRow = ({ flowchart, handleDelete }) => {
           <Link to={`/create-flowchart?flow=${name}`}>{name}</Link>
           <span className="flex space-x-2">
             <ShareIcon />
-            <EditIcon />
+            <EditIcon onClick={() => navigate(`/create-flowchart?flow=${name}`)} />
             <DeleteIcon onClick={() => handleDeleteCall(flowchart._id)} />
           </span>
         </div>

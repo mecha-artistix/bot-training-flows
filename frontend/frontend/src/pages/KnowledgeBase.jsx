@@ -123,7 +123,7 @@ const BodyRow = ({ data, handleDelete }) => {
           <Link to={`/create-flowchart?flow=${name}`}>{name}</Link>
           <span className="flex space-x-2">
             <ShareIcon />
-            <EditIcon />
+
             <DeleteIcon onClick={() => handleDeleteCall(_id)} />
           </span>
         </div>
