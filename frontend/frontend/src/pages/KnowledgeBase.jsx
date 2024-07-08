@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
-import ShareIcon from '../assets/ShareIcon';
-import EditIcon from '../assets/EditIcon';
+import ShareIcon from '../assets/icons/ShareIcon';
+import EditIcon from '../assets/icons/EditIcon';
 import DeleteIcon from '../assets/DeleteIcon';
 
 const columns = ['File Name', 'File Source', 'Created Date'];
@@ -40,8 +40,8 @@ export default function KnowledgeBase() {
   }
 
   return (
-    <section className="flex flex-col h-full w-5/6 mx-auto">
-      <div className="w-full relative overflow-x-auto ">
+    <section className="mx-auto flex h-full w-5/6 flex-col">
+      <div className="relative w-full overflow-x-auto">
         <table>
           <Header />
           {flowcharts.length > 0 ? <Body flowcharts={flowcharts} handleDelete={deletePromptFile} /> : <></>}
@@ -53,7 +53,7 @@ export default function KnowledgeBase() {
 
 const Header = () => {
   return (
-    <thead className="text-xs text-gray-700 capitalize bg-gray-50 dark:bg-gray-100">
+    <thead className="bg-gray-50 text-xs capitalize text-gray-700 dark:bg-gray-100">
       <tr className="border border-black">
         {columns.map((column, i) => (
           <th key={i}>{column}</th>
@@ -102,7 +102,7 @@ const BodyRow = ({ flowchart, handleDelete }) => {
   return (
     <tr>
       <td>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <Link to={`/create-flowchart?flow=${name}`}>{name}</Link>
           <span className="flex space-x-2">
             <ShareIcon />
