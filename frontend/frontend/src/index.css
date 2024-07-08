@@ -15,10 +15,13 @@
     @apply mx-auto w-[1280px];
   } */
   .cwu_form_btn {
-    @apply w-full rounded bg-secondry py-1 text-white transition-all hover:bg-secondry_act;
+    @apply w-full rounded bg-secondry py-3 text-white transition-all hover:bg-secondry_act;
   }
   .cwu_magent_btn {
-    @apply rounded bg-accent px-3 py-2 text-white;
+    @apply rounded bg-secondry px-3 py-2 text-white;
+  }
+  .cwu_accent_btn {
+    @apply rounded bg-accent px-3 py-2 text-base font-semibold;
   }
   .leftbar_nav a.active,
   .leftbar_nav a:hover {
@@ -44,12 +47,18 @@
     @apply border-collapse border px-1 py-2 first:w-2/4;
   }
   nav ul li {
-    @apply flex space-x-2;
+    @apply flex space-x-3;
   }
   .gray_icon {
     @apply cursor-pointer text-neutral-500;
   }
   .nav-icon {
     @apply size-6 cursor-pointer text-accent;
+  }
+  .header-icon {
+    @apply size-6 cursor-pointer text-secondry;
+  }
+  .flowchart-icons {
+    @apply size-6 cursor-pointer text-secondry;
   }
 }

@@ -3,7 +3,8 @@ import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import ShareIcon from '../assets/icons/ShareIcon';
 import EditIcon from '../assets/icons/EditIcon';
-import DeleteIcon from '../assets/DeleteIcon';
+import DeleteIcon from '../assets/icons/DeleteIcon';
+import SecondryNavigation from '../components/SecondryNavigation';
 
 const columns = ['Name', 'Created Date', 'Generated Test File'];
 
@@ -33,14 +34,19 @@ function FlowCharts() {
   }
 
   return (
-    <section className="mx-auto flex h-full w-5/6 flex-col">
-      <div className="relative w-full overflow-x-auto">
-        <table>
-          <Header />
-          {flowcharts.length > 0 ? <Body flowcharts={flowcharts} handleDelete={deleteFlowchart} /> : <></>}
-        </table>
+    <>
+      <div className="h-48">
+        <SecondryNavigation />
       </div>
-    </section>
+      <section className="mx-auto flex h-full w-5/6 flex-col">
+        <div className="relative w-full overflow-x-auto">
+          <table>
+            <Header />
+            {flowcharts.length > 0 ? <Body flowcharts={flowcharts} handleDelete={deleteFlowchart} /> : <></>}
+          </table>
+        </div>
+      </section>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useEffect, useState, createContext, useContext, useReducer } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -17,7 +18,8 @@ function reducer(state, action) {
     case 'failed':
       return initState;
     case 'logout':
-      localStorage.removeItem('userID', action.payload.userID);
+      // localStorage.removeItem('userID', action.payload.userID);
+
       return initState;
     default:
       break;
@@ -29,7 +31,6 @@ export function AuthProvider({ children }) {
 
   const [isAuthenticated, setIsAuthenticated] = useState();
   const [response, setResponse] = useState();
-
   // Login
   const login = async (creds) => {
     try {

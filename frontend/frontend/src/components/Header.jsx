@@ -1,11 +1,16 @@
 import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { startNode } from './nodes/ActionNode';
+import { useAuth } from '../context/AuthContext';
+import Logout from '../assets/icons/LogoutIcon';
+import HomeIcon from '../assets/icons/HomeIcon';
+import UserProfileIcon from '../assets/icons/UserProfileIcon';
 function Header() {
   const [flowName, setFlowName] = useState('');
   const [popup, setPopup] = useState(false);
   const userID = localStorage.getItem('userID');
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   function handleClick() {
     setPopup((prev) => !prev);
   }
@@ -35,26 +40,43 @@ function Header() {
     setPopup(false);
     setFlowName('');
   }
+  function handleSignOut() {
+    logout();
+    navigate(`/sign-in`);
+  }
   return (
-    <div className="border-primary flex items-center justify-between border-b-2 px-2 py-2">
-      <div className="relative p-0">
-        <button onClick={handleClick}>Create New Flow +</button>
-        {popup && (
-          <div className="absolute left-0 top-0 z-50 flex translate-y-10 bg-gray-400 px-10 py-10">
-            <input
-              type="text"
-              placeholder="Set Flow Name"
-              value={flowName}
-              onChange={(e) => setFlowName(e.target.value)}
-            />
-            <button className="cwu_magent_btn" onClick={handleCreateFlow}>
-              Create
-            </button>
-          </div>
-        )}
+    <div className="flex items-center justify-between border-b-2 border-primary px-2 py-2">
+      <div className="relative flex space-x-1 p-0">
+        <HomeIcon />
+        <button>Home</button>
       </div>
-      {/* <Link to="/create-flowchart">Create New Flow +</Link> */}
-      <button className="cwu_magent_btn">Import File</button>
+
+      <span onClick={handleClick} className="flex space-x-1">
+        <UserProfileIcon />
+
+        <button className="font-bold capitalize">{user.username}</button>
+      </span>
+
+      {popup && (
+        <div className="border-theme_grey absolute right-0 top-0 z-50 flex translate-y-10 space-y-2 border bg-white px-3 py-4">
+          <nav>
+            <ul className="flex flex-col space-y-2">
+              <li>
+                <span>
+                  <UserProfileIcon />
+                </span>
+                <p>Profile</p>
+              </li>
+              <li onClick={handleSignOut}>
+                <span>
+                  <Logout />
+                </span>
+                <p>Sign Out</p>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
     </div>
   );
 }

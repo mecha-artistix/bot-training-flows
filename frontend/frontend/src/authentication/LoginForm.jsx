@@ -38,33 +38,33 @@ function LoginForm() {
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold " htmlFor="username">
+          <label className="mb-2 font-bold" htmlFor="username" hidden>
             Username
           </label>
           <input
-            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none  ${
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
               error ? 'border-red-500' : ''
             }`}
             type="text"
             id="username"
             name="username"
-            placeholder="Enter Username"
+            placeholder="Email/Username"
             value={creds.username}
             onChange={handleChange}
           />
         </div>
         <div className="mb-2 flex flex-col py-2">
-          <label className="mb-2 font-bold " htmlFor="password">
+          <label className="mb-2 font-bold" htmlFor="password" hidden>
             Password
           </label>
           <input
-            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none  ${
+            className={`rounded border p-2 text-base placeholder-gray-400 focus:outline-none ${
               error ? 'border-red-500' : ''
             }`}
             type="password"
             id="password"
             name="password"
-            placeholder="Enter Password"
+            placeholder="Password"
             value={creds.password}
             onChange={handleChange}
           />
@@ -74,7 +74,14 @@ function LoginForm() {
             <p className="text-red-500">{error}</p>
           </div>
         )}
-        <input className="cwu_form_btn" type="submit" value="Submit" />
+        <div className="my-3 flex items-center justify-between text-accent">
+          <span className="flex space-x-2">
+            <input type="checkbox" id="" />
+            <p>Remember me</p>
+          </span>
+          <p>Forgot Password?</p>
+        </div>
+        <input className="cwu_form_btn" type="submit" value="Sign In" />
       </form>
     </>
   );

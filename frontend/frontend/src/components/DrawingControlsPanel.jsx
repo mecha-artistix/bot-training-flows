@@ -3,6 +3,8 @@ import { useNodesContext } from '../context/NodesContext';
 import { LinkedNodes } from '../utils/generateModelClass';
 // import { useParams,useLocation  } from 'react-router-dom';
 import useQuery from '../utils/useQuery';
+import AddNewFlowChartIcon from '../assets/icons/AddNewFlowChartIcon';
+import CreateNewFlow from './CreateNewFlow';
 // import ModelPrompt from "./ModelPrompt";
 function DrawingControlsPanel() {
   const { nodes, setNodes, edges, coords, reactFlowRef, updateMouseCoords, reactFlowInstance, nodeConnections } =
@@ -91,26 +93,36 @@ function DrawingControlsPanel() {
       {viewPrompt && (
         <div
           ref={promptRef}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 backdrop-blur-md z-50 p-4 border border-slate-500 w-9/12 h-[600px] overflow-y-auto"
+          className="absolute left-1/2 top-1/2 z-50 h-[600px] w-9/12 -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto border border-slate-500 p-4 backdrop-blur-md"
         >
-          <div className="w-full h-full" style={{ whiteSpace: 'pre-wrap' }}>
-            <button className="fixed top-4 right-4" onClick={() => setViewPrompt(false)}>
+          <div className="h-full w-full" style={{ whiteSpace: 'pre-wrap' }}>
+            <button className="fixed right-4 top-4" onClick={() => setViewPrompt(false)}>
               ⛔
             </button>
             {prompt}
           </div>
         </div>
       )}
-      <div className="w-full p-2 flex justify-between">
-        <div className="cwu_magent_btn" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-          Drag and Drop Node
-        </div>
+      <div className="flex w-full justify-between p-2">
+        <span className="flex flex-col">
+          <CreateNewFlow />
+          <div
+            className="absolute z-10 flex translate-y-10 items-center space-x-2"
+            onDragStart={(event) => onDragStart(event, 'default')}
+            draggable
+          >
+            <span>Add New</span>
+            <AddNewFlowChartIcon />
+          </div>
+        </span>
+
         <div className="ml-auto space-x-1">
           <button className="cwu_magent_btn" onClick={handleSaveFLow}>
-            Save Flow
+            Save
           </button>
-          <button className="cwu_magent_btn" onClick={handleViewPrompt}>
-            Generate Prompt
+
+          <button className="cwu_accent_btn" onClick={handleViewPrompt}>
+            Test Bot
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import ShareIcon from '../assets/icons/ShareIcon';
 import EditIcon from '../assets/icons/EditIcon';
-import DeleteIcon from '../assets/DeleteIcon';
+import DeleteIcon from '../assets/icons/DeleteIcon';
 
 const columns = ['File Name', 'File Source', 'Created Date'];
 

@@ -10,7 +10,9 @@ import LeftPanel from './components/LeftPanel';
 import FlowCharts from './pages/FlowCharts';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Leads from './pages/Leads';
+import Bots from './pages/Bots';
 import { useEffect } from 'react';
+import SecondryNavigation from './components/SecondryNavigation';
 
 const register_path = '/sign-in';
 const singIn_path = 'sign-in';
@@ -46,12 +48,14 @@ function AuthenticatedApp() {
         </header>
         <main className="flex w-full flex-col">
           <Header />
+
           <section className="flex flex-grow flex-col px-2 py-2">
             <Routes>
               {/* <Route path={`/`} element={<UserSpecificRoutes />} /> */}
               <Route index element={<FlowCharts />} />
               <Route path="create-flowchart" element={<FlowChartBoard />} />
               <Route path="knowledgebase" element={<KnowledgeBase />} />
+              <Route path="bots" element={<Bots />} />
               <Route path="leads" element={<Leads />} />
             </Routes>
           </section>

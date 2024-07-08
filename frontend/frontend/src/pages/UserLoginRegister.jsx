@@ -19,8 +19,8 @@ function UserLoginRegister() {
 
         <section className="flex w-1/2 flex-1 flex-col items-center space-y-8">
           <div className="flex flex-col items-center">
-            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-4xl text-primary">Creative Bot</h2>
-            <p className="tracking-[.5rem]">24/7 at Your Service!</p>
+            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-3xl text-primary">Creative Bot</h2>
+            <p className="tracking-[.6rem] text-accent">24/7 at Your Service!</p>
           </div>
           <img src={loginPageImage} className="hidden w-2/3 sm:block" loading="lazy" />
         </section>
@@ -28,12 +28,12 @@ function UserLoginRegister() {
         {/* RIGHT SECTION */}
         <section className="mx-4 flex w-1/2 flex-1 flex-col items-stretch space-y-5 p-4">
           {/* <div className="flex-grow flex flex-col mx-4 size-1/2 rounded bg-accent_magenta p-6 px-6 py-8 shadow-lg"> */}
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-3">
             <h2 className="mb-1 text-4xl font-bold">
-              {path.current == path.signIn ? 'Log in to your account' : 'Sing up with your account'}
+              {path.current == path.signIn ? 'Log in to your account' : 'Sign up with your account'}
             </h2>
-            <p className="mb-1 text-sm">
-              {path.current == path.signIn ? 'Welcome back! Select method to sign up.' : 'Sign Up'}
+            <p className="mb-1 text-sm text-neutral-500">
+              {path.current == path.signIn ? 'Welcome back! Select method to sign up.' : 'Select method to sign up'}
             </p>
           </div>
 
@@ -47,7 +47,7 @@ function UserLoginRegister() {
               FACEBOOK
             </div>
           </div>
-          <div className="text-center">or continue with email</div>
+          <div className="text-center text-neutral-500">or continue with email</div>
 
           {/* AUTH VIA FORM */}
 
@@ -57,15 +57,15 @@ function UserLoginRegister() {
           <div className="pt-2 text-right">
             {path.current == path.signIn ? (
               <p>
-                Dont hanve an account?{' '}
-                <NavLink className="text-base font-bold" to="register">
+                Dont hanve an account?
+                <NavLink className="mx-1 text-base font-bold text-accent" to="register">
                   Create one
                 </NavLink>
               </p>
             ) : (
               <p>
-                Already a member?{' '}
-                <NavLink className="text-base font-bold" to="/sign-in">
+                Already a member?
+                <NavLink className="mx-1 text-base font-bold text-accent" to="/sign-in">
                   Sign In
                 </NavLink>
               </p>
