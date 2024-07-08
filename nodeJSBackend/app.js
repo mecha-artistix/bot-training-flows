@@ -26,7 +26,7 @@ app.use('/api/v1/users/profiles', userProfileRouter);
 app.use('/api/v1/flowcharts', flowchartRouter);
 
 // PROMPT FILE ROUTES
-app.use('/api/v1/promptFile', promptFileRouter);
+app.use('/api/v1/promptfiles', promptFileRouter);
 
 // RESPONE FOR HOME LINK
 app.get('/', (req, res) => {

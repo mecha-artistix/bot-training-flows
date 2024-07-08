@@ -11,14 +11,9 @@ const userID = localStorage.getItem('userID');
 
 export default function KnowledgeBase() {
   // const [promptFiles, setPromptFiles] = useState([]);
-  const [promptFiles, setPromptFiles] = useState([
-    { name: 'Test', source: 'Imported', createdAt: '14/04/2024 11:30:15', _id: 1 },
-    { name: 'Test', source: 'Imported', createdAt: '14/04/2024 11:30:15', _id: 2 },
-    { name: 'Test', source: 'Imported', createdAt: '14/04/2024 11:30:15', _id: 3 },
-    { name: 'Test', source: 'Imported', createdAt: '14/04/2024 11:30:15', _id: 4 },
-    { name: 'Test', source: 'Imported', createdAt: '14/04/2024 11:30:15', _id: 5 },
-  ]);
+  const [promptFiles, setPromptFiles] = useState([]);
   const [flowcharts, setFlowcharts] = useState([]);
+  const [userData, setUserData] = useState([]);
   useEffect(() => {
     // GET FLOW CHARTS
     async function getFlowCharts() {
@@ -26,8 +21,12 @@ export default function KnowledgeBase() {
         const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}`);
         const responseObj = await response.json();
         const data = await responseObj.data;
-        console.log(data);
-        setFlowcharts(data.flowcharts);
+        // console.log(data);
+
+        setFlowcharts(() => {
+          const flows = data.flowcharts.map((flow) => ({ ...flow, source: 'Generated' }));
+          return flows;
+        });
       } catch (error) {
         console.log(error);
       }
@@ -35,16 +34,43 @@ export default function KnowledgeBase() {
     getFlowCharts();
   }, []);
 
+  useEffect(() => {
+    async function getPromptFiles() {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}promptfiles/${userID}`);
+        const resObj = await response.json();
+        const data = await resObj.data;
+        console.log(data);
+        setPromptFiles(() => {
+          const prompts = data.promptFiles.map((prompt) => ({ ...prompt, source: 'Imported' }));
+          return prompts;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getPromptFiles();
+  }, []);
+
+  useEffect(() => {
+    setUserData((prev) => {
+      const data = [...promptFiles, ...flowcharts];
+      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      return data;
+    });
+  }, [promptFiles, flowcharts]);
+
   function deletePromptFile(id) {
-    setPromptFiles((prev) => promptFiles.filter((file) => file._id !== id));
+    setUserData((prev) => userData.filter((file) => file._id !== id));
   }
 
   return (
-    <section className="mx-auto flex h-full w-5/6 flex-col">
+    <section className="mx-auto mt-48 flex h-full w-5/6 flex-col">
       <div className="relative w-full overflow-x-auto">
         <table>
           <Header />
-          {flowcharts.length > 0 ? <Body flowcharts={flowcharts} handleDelete={deletePromptFile} /> : <></>}
+          {flowcharts.length > 0 ? <Body data={userData} handleDelete={deletePromptFile} /> : <></>}
         </table>
       </div>
     </section>
@@ -63,18 +89,18 @@ const Header = () => {
   );
 };
 
-const Body = ({ flowcharts, handleDelete }) => {
+const Body = ({ data, handleDelete }) => {
   return (
     <tbody>
-      {flowcharts.map((flowchart, i) => (
-        <BodyRow flowchart={flowchart} key={i} handleDelete={handleDelete} />
+      {data.map((obj, i) => (
+        <BodyRow data={obj} key={i} handleDelete={handleDelete} />
       ))}
     </tbody>
   );
 };
 
-const BodyRow = ({ flowchart, handleDelete }) => {
-  const { name, createdAt, promptText } = flowchart;
+const BodyRow = ({ data, handleDelete }) => {
+  const { name, createdAt, promptText, source, _id } = data;
 
   function handleGoToFlowchart() {
     async function navToFlowchart(params) {
@@ -84,15 +110,6 @@ const BodyRow = ({ flowchart, handleDelete }) => {
   // DELETE FLOW CHART
   async function handleDeleteCall(id) {
     try {
-      // const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}?id=${id}`, {
-      //   method: 'DELETE',
-      //   headers: {
-      //     'Content-type': 'application/json',
-      //   },
-      // });
-      // if (!response.ok) throw new Error(`Error: ${response.message}`);
-
-      // const data = await response.json();
       handleDelete(id);
     } catch (error) {
       console.error(error);
@@ -107,12 +124,12 @@ const BodyRow = ({ flowchart, handleDelete }) => {
           <span className="flex space-x-2">
             <ShareIcon />
             <EditIcon />
-            <DeleteIcon onClick={() => handleDeleteCall(flowchart._id)} />
+            <DeleteIcon onClick={() => handleDeleteCall(_id)} />
           </span>
         </div>
       </td>
       <td>
-        <Link to={`/create-flowchart?flow=${name}`}> {promptText}</Link>
+        <Link to={`/create-flowchart?flow=${name}`}> {source}</Link>
       </td>
       <td>{formatDate(createdAt)}</td>
     </tr>

@@ -43,7 +43,7 @@ function AuthenticatedApp() {
   return (
     <>
       <div className="mx-auto flex h-screen w-full items-stretch">
-        <header className="w-1/6">
+        <header className="">
           <LeftPanel />
         </header>
         <main className="flex w-full flex-col">

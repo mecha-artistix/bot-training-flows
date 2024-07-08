@@ -17,6 +17,7 @@ const userProfileSchema = new mongoose.Schema({
     country: { type: String, default: null },
   },
   flowcharts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart' }],
+  promptFiles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PromptFile' }],
 });
 
 module.exports = mongoose.model('UserProfile', userProfileSchema);

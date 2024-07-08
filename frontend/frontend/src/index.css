@@ -15,10 +15,10 @@
     @apply mx-auto w-[1280px];
   } */
   .cwu_form_btn {
-    @apply w-full rounded bg-secondry py-3 text-white transition-all hover:bg-secondry_act;
+    @apply w-full cursor-pointer rounded bg-secondry py-3 text-white transition-all hover:bg-secondry_act;
   }
   .cwu_magent_btn {
-    @apply rounded bg-secondry px-3 py-2 text-white;
+    @apply cursor-pointer rounded bg-secondry px-3 py-2 text-white;
   }
   .cwu_accent_btn {
     @apply rounded bg-accent px-3 py-2 text-base font-semibold;
@@ -49,6 +49,7 @@
   nav ul li {
     @apply flex space-x-3;
   }
+
   .gray_icon {
     @apply cursor-pointer text-neutral-500;
   }
