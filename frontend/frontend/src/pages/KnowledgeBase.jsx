@@ -32,15 +32,14 @@ export default function KnowledgeBase() {
       }
     }
     getFlowCharts();
-  }, []);
 
-  useEffect(() => {
+    // GET PROMPT FILES
     async function getPromptFiles() {
       try {
         const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}promptfiles/${userID}`);
         const resObj = await response.json();
         const data = await resObj.data;
-        console.log(data);
+
         setPromptFiles(() => {
           const prompts = data.promptFiles.map((prompt) => ({ ...prompt, source: 'Imported' }));
           return prompts;
@@ -49,14 +48,16 @@ export default function KnowledgeBase() {
         console.log(error);
       }
     }
+
     getPromptFiles();
   }, []);
 
+  // GENERATE USER DATA OBJ
   useEffect(() => {
     setUserData((prev) => {
       const data = [...promptFiles, ...flowcharts];
       data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+      console.log(data);
       return data;
     });
   }, [promptFiles, flowcharts]);
@@ -70,7 +71,7 @@ export default function KnowledgeBase() {
       <div className="relative w-full overflow-x-auto">
         <table>
           <Header />
-          {flowcharts.length > 0 ? <Body data={userData} handleDelete={deletePromptFile} /> : <></>}
+          {userData.length > 0 ? <Body data={userData} handleDelete={deletePromptFile} /> : <></>}
         </table>
       </div>
     </section>
