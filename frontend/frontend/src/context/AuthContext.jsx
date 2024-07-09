@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
-const USERS_API = import.meta.env.VITE_AUTH_URL;
+const USERS_API = import.meta.env.VITE_NODE_BASE_API + 'users';
 // const USERS_API = process.env.REACT_APP_API_URL;
 
 // const initState = { status: true, username: 'huzaifa' };
