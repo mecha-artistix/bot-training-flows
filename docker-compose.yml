@@ -41,8 +41,8 @@ services:
       - '3000:3000'
     # depends_on:
     #   - mongo
-    env_file:
-      - ./nodeJSBackend/.env
+    # env_file:
+    #   - ./nodeJSBackend/.env
 
   frontend:
     build:
