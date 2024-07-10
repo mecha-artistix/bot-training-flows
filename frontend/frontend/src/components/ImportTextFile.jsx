@@ -33,22 +33,45 @@ function ImportTextFile() {
             }),
           });
           const data = await response.json();
-          console.log('File submitted successfully:', data);
+          // console.log('File submitted successfully:', data);
           navigate('/knowledgebase');
         } catch (error) {
-          console.error('Error submitting file:', error.message);
+          // console.error('Error submitting file:', error.message);
         }
       };
       reader.readAsText(file);
     }
   };
+  useEffect(() => {
+    async function postToApi() {
+      try {
+        const response = await fetch('http://5.9.96.58:4000/fetchmodel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: fileContent.fileBody,
+            id: userID,
+            name: 'fileContent_fileName',
+          }),
+        });
+        if (!response.ok) throw new Error();
+        // const data = await response.json();
+        // console.log(data);SS
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    postToApi();
+  }, [fileContent]);
 
   return (
     <div>
       <label htmlFor="file_input" className="cwu_accent_btn">
         Import File
       </label>
-      <input type="file" accept=".txt" id="file_input" onChange={handleFileRead} className="hidden" />
+      <input type="file" id="file_input" onChange={handleFileRead} className="hidden" />
     </div>
   );
 }

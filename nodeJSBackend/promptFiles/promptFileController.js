@@ -6,6 +6,24 @@ exports.createPromptFile = async (req, res) => {
   try {
     const prompt = { ...req.body };
     const { name, promptText, user } = req.body;
+    // generate refined prompt
+    // async function postToApi() {
+    //   const response = await fetch('http://5.9.96.58:4000/fetchmodel', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: {
+    //       prompt: promptText,
+    //       id: user,
+    //       name: name,
+    //     },
+    //   });
+    //   if (!response.ok) console.log('error');
+    //   const data = await response.json();
+    //   console.log(data);
+    // }
+    // postToApi();
     const newPrompt = await PromptFile.create({
       user: user,
       name: name,
