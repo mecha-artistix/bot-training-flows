@@ -62,4 +62,10 @@
   .flowchart-icons {
     @apply size-6 cursor-pointer text-secondry;
   }
+  .scrollbar-none::-webkit-scrollbar {
+    @apply hidden;
+  }
+  .testBotIcons {
+    @apply size-6 cursor-pointer text-secondry;
+  }
 }

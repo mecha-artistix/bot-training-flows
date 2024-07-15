@@ -8,11 +8,9 @@ import SecondryNavigation from '../components/SecondryNavigation';
 
 const columns = ['Name', 'Created Date', 'Generated Test File'];
 
-const userID = localStorage.getItem('userID');
-
 function FlowCharts() {
   const [flowcharts, setFlowcharts] = useState([]);
-
+  const userID = localStorage.getItem('userID');
   useEffect(() => {
     // GET FLOW CHARTS
     async function getFlowCharts() {

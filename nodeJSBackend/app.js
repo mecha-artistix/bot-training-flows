@@ -1,12 +1,13 @@
-const cors = require('cors');
 const express = require('express');
+const app = express();
+const cors = require('cors');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const usersAuthRouter = require('./userAuthertication/usersAuthRoutes');
 const userProfileRouter = require('./userProfile/userProfileRoutes');
 const flowchartRouter = require('./flowcharts/flowchartRoutes');
 const promptFileRouter = require('./promptFiles/promptFileRoutes');
-const morgan = require('morgan');
-const app = express();
+const botsRouter = require('./bots/botRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -24,6 +25,9 @@ app.use('/api/v1/users/profiles', userProfileRouter);
 
 // FlowChart Routes
 app.use('/api/v1/flowcharts', flowchartRouter);
+
+// Bots Routs
+app.use('/api/v1/bots', botsRouter);
 
 // PROMPT FILE ROUTES
 app.use('/api/v1/promptfiles', promptFileRouter);

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const LinkedNodes = require('./generatePromptString');
+const { LinkedNodes, makeConnectionsObj, generateModel } = require('./generatePromptString');
+const Bot = require('../bots/botModel');
+const UserProfile = require('../userProfile/UserProfileModel');
 
 const nodeSchema = new mongoose.Schema({
   type: { type: String },
@@ -31,64 +33,36 @@ const flowChartSchema = new mongoose.Schema({
   nodes: [nodeSchema],
   edges: [edgeSchema],
   promptText: { type: String },
+  bot: { type: mongoose.Schema.Types.ObjectId, ref: 'Bot' },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile', required: true },
 });
 
 // Middleware to fetch the document before update
-// flowChartSchema.pre('findOneAndUpdate', async function (next) {
-//   try {
-//     console.log(this.qetQuery);
-//     // const { promptText } = doc;
+flowChartSchema.post('findOneAndUpdate', async function (doc, next) {
+  if (doc) {
+    try {
+      // console.log('options \n', this.options);
+      const { name, nodes, edges, user, _id } = doc;
+      // console.log(nodes, edges);
+      // Generate promptText
+      const promptList = new LinkedNodes();
+      makeConnectionsObj(promptList, nodes, edges);
+      const promptConnectedList = promptList.getTree();
+      const promptText = generateModel(promptConnectedList);
 
-//     // await PromptFile.findOneAndUpdate({ _id: doc._id }, { promptText });
-//     // console.log(promptText);
-//   } catch (error) {
-//     console.log(error.message);
-//     next(error.message);
-//   }
-//   next();
-// });
+      const botData = { user, name, prompt: { promptText, source: _id } };
+      const bot = await Bot.findOneAndUpdate({ user, name }, { $set: botData }, { new: true, upsert: true });
 
-// flowChartSchema.post('save', async function (doc, next) {
-//   try {
-//     const { nodes, edges } = doc;
-//     const promptList = new LinkedNodes(nodes, edges);
-//     const promptText = promptList.generateModel();
-//     await Flowchart.findOneAndUpdate({ _id: doc._id }, { promptText });
-//     console.log(promptText);
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// });
-
-// flowChartSchema.pre('updateOne', async function (next) {
-//   console.log('updateOne');
-//   try {
-//     const update = this.getUpdate();
-//     console.log(update);
-//     console.log(this.getQuery());
-//     // Fetch the document being updated
-//     const docToUpdate = await this.model.findOne(this.getQuery());
-
-//     if (!docToUpdate) {
-//       return next(new Error('Document not found'));
-//     }
-
-//     const { nodes, edges } = update.$set || update;
-
-//     // Now you have access to nodes and edges in docToUpdate
-//     const list = new LinkedNodes(nodes, edges);
-//     const promptText = await list.generateModel();
-
-//     // Ensure $set is initialized in update
-//     update.$set = update.$set || {};
-//     update.$set.promptText = promptText;
-
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+      if (bot && bot._id) {
+        await Flowchart.updateOne({ _id: doc._id }, { $addToSet: { bot: bot._id } });
+        await UserProfile.findOneAndUpdate({ user }, { $addToSet: { bots: bot._id } }, { new: true, upsert: true });
+      }
+    } catch (error) {
+      console.error('Error updating bot:', error);
+    }
+  }
+  next();
+});
 
 const Flowchart = mongoose.model('Flowchart', flowChartSchema);
 module.exports = Flowchart;

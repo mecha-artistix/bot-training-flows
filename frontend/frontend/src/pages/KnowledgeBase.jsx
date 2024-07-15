@@ -1,88 +1,115 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useReducer, useState } from 'react';
 import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import ShareIcon from '../assets/icons/ShareIcon';
 import EditIcon from '../assets/icons/EditIcon';
 import DeleteIcon from '../assets/icons/DeleteIcon';
+import TestBot from '../components/TestBot';
 
-const columns = ['File Name', 'File Source', 'Created Date'];
+// create context
 
-const userID = localStorage.getItem('userID');
+const BotContext = createContext();
 
-export default function KnowledgeBase() {
-  // const [promptFiles, setPromptFiles] = useState([]);
-  const [promptFiles, setPromptFiles] = useState([]);
-  const [flowcharts, setFlowcharts] = useState([]);
-  const [userData, setUserData] = useState([]);
+const initState = {
+  columns: ['File Name', 'File Source', 'Created Date'],
+  testBot: { isActive: false, name: '', id: null },
+  userId: localStorage.getItem('userID'),
+  bots: [],
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'setUser':
+      return { ...state, userId: action.payload };
+    case 'testBot':
+      // console.log('test action payload:', action.payload);
+      return {
+        ...state,
+        testBot: { isActive: !state.testBot.isActive, name: action.payload.name, id: action.payload.id },
+      };
+    case 'closeChat':
+      return { ...state, testBot: { isActive: false, name: '' } };
+    case 'setBots':
+      return { ...state, bots: action.payload };
+    case 'deleteBot':
+      return { ...state, bots: state.bots.filter((bot) => bot._id !== action.payload) };
+    default:
+      return state;
+  }
+}
+
+// create Provider
+const BotProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initState);
+
   useEffect(() => {
-    // GET FLOW CHARTS
-    async function getFlowCharts() {
+    async function getBots() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${userID}`);
+        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}bots/${state.userId}`);
+        if (!response.ok) throw new Error('Error fetching bots');
         const responseObj = await response.json();
         const data = await responseObj.data;
-        // console.log(data);
-
-        setFlowcharts(() => {
-          const flows = data.flowcharts.map((flow) => ({ ...flow, source: 'Generated' }));
-          return flows;
-        });
-      } catch (error) {
-        console.log(error);
+        dispatch({ type: 'setBots', payload: data.bots });
+        console.log(state.bots);
+      } catch (err) {
+        console.log(err);
       }
     }
-    getFlowCharts();
-
-    // GET PROMPT FILES
-    async function getPromptFiles() {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}promptfiles/${userID}`);
-        const resObj = await response.json();
-        const data = await resObj.data;
-
-        setPromptFiles(() => {
-          const prompts = data.promptFiles.map((prompt) => ({ ...prompt, source: 'Imported' }));
-          return prompts;
-        });
-      } catch (error) {
-        console.log(error);
-      }
+    if (state.userId) {
+      getBots();
     }
+  }, [state.userId]);
 
-    getPromptFiles();
-  }, []);
+  const value = { state, dispatch };
+  return <BotContext.Provider value={value}>{children}</BotContext.Provider>;
+};
 
-  // GENERATE USER DATA OBJ
-  useEffect(() => {
-    setUserData((prev) => {
-      const data = [...promptFiles, ...flowcharts];
-      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      console.log(data);
-      return data;
-    });
-  }, [promptFiles, flowcharts]);
+export default function KnowledgeBase() {
+  return (
+    <BotProvider>
+      <KnowledgeBaseTable />
+    </BotProvider>
+  );
+}
 
-  function deletePromptFile(id) {
-    setUserData((prev) => userData.filter((file) => file._id !== id));
+function KnowledgeBaseTable() {
+  const { state, dispatch } = useContext(BotContext);
+
+  function handelTestBots(params) {
+    dispatch({ type: 'testBot' });
+    console.log(state.testBot);
   }
+
+  function handleCloseChat() {
+    dispatch({ type: 'closeChat' });
+  }
+
+  if (!state.bots) return <p>No Bots Found</p>;
 
   return (
     <section className="mx-auto mt-48 flex h-full w-5/6 flex-col">
       <div className="relative w-full overflow-x-auto">
+        {/* {console.log(state.bots)} */}
         <table>
           <Header />
-          {userData.length > 0 ? <Body data={userData} handleDelete={deletePromptFile} /> : <></>}
+          <Body />
         </table>
+        <button onClick={handelTestBots}>Test Bot</button>
       </div>
+      {state.testBot.isActive && (
+        <TestBot name={state.testBot.name} userId={state.userId} closeChat={handleCloseChat} botId={state.testBot.id} />
+      )}
     </section>
   );
 }
 
 const Header = () => {
+  const { state } = useContext(BotContext);
+
   return (
     <thead className="bg-gray-50 text-xs capitalize text-gray-700 dark:bg-gray-100">
       <tr className="border border-black">
-        {columns.map((column, i) => (
+        {state.columns.map((column, i) => (
           <th key={i}>{column}</th>
         ))}
       </tr>
@@ -90,42 +117,28 @@ const Header = () => {
   );
 };
 
-const Body = ({ data, handleDelete }) => {
-  return (
-    <tbody>
-      {data.map((obj, i) => (
-        <BodyRow data={obj} key={i} handleDelete={handleDelete} />
-      ))}
-    </tbody>
-  );
+const Body = () => {
+  const { state } = useContext(BotContext);
+  return <tbody>{state.bots && state.bots.map((bot, i) => <BodyRow bot={bot} key={i} />)}</tbody>;
 };
 
-const BodyRow = ({ data, handleDelete }) => {
-  const { name, createdAt, promptText, source, _id } = data;
+const BodyRow = ({ bot }) => {
+  const { dispatch } = useContext(BotContext);
+  const { name, createdAt, prompt, _id } = bot;
+  const source = prompt.source ? 'Generated' : 'Imported';
 
-  function handleGoToFlowchart() {
-    async function navToFlowchart(params) {
-      const response = await fetch();
-    }
-  }
-  // DELETE FLOW CHART
-  async function handleDeleteCall(id) {
-    try {
-      handleDelete(id);
-    } catch (error) {
-      console.error(error);
-    }
+  function handleBotClick(name, id) {
+    dispatch({ type: 'testBot', payload: { name: name, id: id } });
   }
 
   return (
     <tr>
       <td>
         <div className="flex items-center justify-between">
-          <Link to={`/create-flowchart?flow=${name}`}>{name}</Link>
+          <p onClick={() => handleBotClick(name, _id)}>{name}</p>
           <span className="flex space-x-2">
             <ShareIcon />
-
-            <DeleteIcon onClick={() => handleDeleteCall(_id)} />
+            <DeleteIcon />
           </span>
         </div>
       </td>

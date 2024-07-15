@@ -18,11 +18,10 @@ function reducer(state, action) {
     case 'failed':
       return initState;
     case 'logout':
-      // localStorage.removeItem('userID', action.payload.userID);
-
+      localStorage.clear();
       return initState;
     default:
-      break;
+      state;
   }
 }
 

@@ -42,7 +42,7 @@ function Header() {
   }
   function handleSignOut() {
     logout();
-    navigate(`/sign-in`);
+    // navigate(`/sign-in`);
   }
   return (
     <div className="flex items-center justify-between border-b-2 border-primary px-2 py-2">
@@ -58,7 +58,7 @@ function Header() {
       </span>
 
       {popup && (
-        <div className="border-theme_grey absolute right-0 top-0 z-50 flex translate-y-10 space-y-2 border bg-white px-3 py-4">
+        <div className="absolute right-0 top-0 z-50 flex translate-y-10 space-y-2 border border-theme_grey bg-white px-3 py-4">
           <nav>
             <ul className="flex flex-col space-y-2">
               <li>

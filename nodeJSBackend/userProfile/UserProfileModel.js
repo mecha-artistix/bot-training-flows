@@ -17,6 +17,7 @@ const userProfileSchema = new mongoose.Schema({
     country: { type: String, default: null },
   },
   flowcharts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart' }],
+  bots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bot' }],
   promptFiles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PromptFile' }],
 });
 

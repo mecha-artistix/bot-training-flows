@@ -5,16 +5,18 @@ import { LinkedNodes } from '../utils/generateModelClass';
 import useQuery from '../utils/useQuery';
 import AddNewFlowChartIcon from '../assets/icons/AddNewFlowChartIcon';
 import CreateNewFlow from './CreateNewFlow';
+import TestBot from './TestBot';
 // import ModelPrompt from "./ModelPrompt";
 function DrawingControlsPanel() {
   const { nodes, setNodes, edges, coords, reactFlowRef, updateMouseCoords, reactFlowInstance, nodeConnections } =
     useNodesContext();
-  const [viewPrompt, setViewPrompt] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  // const [viewPrompt, setViewPrompt] = useState(false);
+  // const [prompt, setPrompt] = useState('');
+  const [phone, setPhone] = useState(false);
   const promptRef = useRef(null);
   const flowName = useQuery().get('flow');
   const userID = localStorage.getItem('userID');
-
+  const [botId, setBotId] = useState(null);
   useEffect(() => {
     const currentRef = reactFlowRef.current;
     if (currentRef) {
@@ -32,16 +34,6 @@ function DrawingControlsPanel() {
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  // function updatePrompt() {
-  //   const list = new LinkedNodes(nodes, edges);
-  //   list.generateModel();
-  //   setPrompt(list.generateModel());
-  // }
-
-  // useEffect(() => {
-  //   updatePrompt();
-  // }, [nodes, edges]);
-
   async function saveFlow() {
     try {
       const response = await fetch(import.meta.env.VITE_NODE_BASE_API + `flowcharts/${userID}`, {
@@ -58,6 +50,7 @@ function DrawingControlsPanel() {
       });
       if (!response.ok) throw new Error();
       const data = await response.json();
+      setBotId(data.flowchart.bot);
       return data;
     } catch (error) {
       console.log(error);
@@ -68,13 +61,20 @@ function DrawingControlsPanel() {
     await saveFlow();
   };
 
-  const handleViewPrompt = async () => {
-    saveFlow().then((res) => setPrompt(res.flowchart.promptText));
+  // const handleViewPrompt = async () => {
+  //   // saveFlow().then((res) => setPrompt(res.flowchart.promptText));
 
-    setViewPrompt((viewPrompt) => !viewPrompt);
-    // console.log(saveFlow());
-    // setPrompt(saveFlow().flowchart.promptText);
-  };
+  //   // setViewPrompt((viewPrompt) => !viewPrompt);
+  //   // console.log(saveFlow());
+  //   // setPrompt(saveFlow().flowchart.promptText);
+  // };
+
+  function handleTestBot() {
+    setPhone((phone) => true);
+  }
+  function handleCloseChat() {
+    setPhone((phone) => false);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -90,19 +90,7 @@ function DrawingControlsPanel() {
 
   return (
     <>
-      {viewPrompt && (
-        <div
-          ref={promptRef}
-          className="absolute left-1/2 top-1/2 z-50 h-[600px] w-9/12 -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto border border-slate-500 p-4 backdrop-blur-md"
-        >
-          <div className="h-full w-full" style={{ whiteSpace: 'pre-wrap' }}>
-            <button className="fixed right-4 top-4" onClick={() => setViewPrompt(false)}>
-              ⛔
-            </button>
-            {prompt}
-          </div>
-        </div>
-      )}
+      {phone && <TestBot name={flowName} userId={userID} closeChat={handleCloseChat} botId={botId} />}
       <div className="flex w-full justify-between p-2">
         <span className="flex flex-col">
           <CreateNewFlow />
@@ -121,7 +109,7 @@ function DrawingControlsPanel() {
             Save
           </button>
 
-          <button className="cwu_accent_btn" onClick={handleViewPrompt}>
+          <button className="cwu_accent_btn" onClick={handleTestBot}>
             Test Bot
           </button>
         </div>

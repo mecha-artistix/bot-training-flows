@@ -6,13 +6,7 @@ exports.createFlowchart = async (req, res) => {
   try {
     const { name, nodes, edges, user } = req.body;
 
-    // Generate promptText
-    const promptList = new LinkedNodes();
-    makeConnectionsObj(promptList, nodes, edges);
-    const promptConnectedList = promptList.getTree();
-    const promptText = generateModel(promptConnectedList);
-
-    const flowChartData = { name, nodes, edges, user, promptText };
+    const flowChartData = { name, nodes, edges, user };
 
     const newFlowchart = await Flowchart.findOneAndUpdate(
       { user, name },
@@ -41,17 +35,18 @@ exports.createFlowchart = async (req, res) => {
 };
 
 exports.getFlowcharts = async (req, res) => {
-  const { user } = req.params;
+  const { userId } = req.params;
   const queryObj = { ...req.query };
   try {
     // QUERY ALL OF A USER
-    const userProfile = await UserProfile.findOne({ user: user });
+    const userProfile = await UserProfile.findOne({ user: userId });
     let flowcharts;
 
-    // QUERY BY NAME OF A USER
     if (req.query.flow) {
+      // QUERY single flowchart by providing name of the flow in user profile
       flowcharts = await Flowchart.findOne({ _id: { $in: userProfile.flowcharts }, name: req.query.flow });
     } else {
+      // query all in user profile
       flowcharts = await Flowchart.find({ _id: { $in: userProfile.flowcharts } });
     }
 
@@ -72,10 +67,10 @@ exports.getFlowcharts = async (req, res) => {
 };
 
 exports.deleteFlowchart = async (req, res) => {
-  const { user } = req.params;
+  const { userId } = req.params;
   try {
     // QUERY ALL OF A USER
-    const userProfile = await UserProfile.findOne({ user: user });
+    const userProfile = await UserProfile.findOne({ user: userId });
     if (!userProfile) res.status(404).json({ status: 'failed', message: 'No user found' });
     let flowcharts;
     const deletedFlowchart = await Flowchart.deleteOne({ _id: { $in: userProfile.flowcharts }, _id: req.query.id });
