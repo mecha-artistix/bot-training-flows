@@ -1,82 +1,95 @@
 const Flowchart = require('./flowchartModel');
-const UserProfile = require('../userProfile/UserProfileModel');
-const { LinkedNodes, makeConnectionsObj, generateModel } = require('./generatePromptString');
+const User = require('../users/userModel');
+const Bot = require('../bots/botModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const factory = require('../controllers/handlerFactory');
 
-exports.createFlowchart = async (req, res) => {
-  try {
-    const { name, nodes, edges, user } = req.body;
+// exports.createFlowchart = catchAsync(async (req, res, next) => {
+//   const { _id: userId } = req.user;
+//   // if (flowcharts.length == 0) return next(new AppError('No flowcharts found', 404));
+//   // console.log('userId ', userId);
+//   const { name, nodes, edges } = req.body;
 
-    const flowChartData = { name, nodes, edges, user };
+//   // const flowChartData = { name, nodes, edges, user };
 
-    const newFlowchart = await Flowchart.findOneAndUpdate(
-      { user, name },
-      { $set: flowChartData },
-      { new: true, upsert: true }
-    );
+//   const newFlowchart = await Flowchart.findOneAndUpdate(
+//     { name, user: userId },
+//     { $set: { name, nodes, edges, user: userId } },
+//     { new: true, upsert: true }
+//   );
 
-    await UserProfile.findOneAndUpdate(
-      { user },
-      { $addToSet: { flowcharts: newFlowchart._id } },
-      { new: true, upsert: true }
-    );
+//   res.status(201).json({
+//     status: 'created',
+//     message: 'flowchart created successfully',
+//     flowchart: newFlowchart,
+//   });
+// });
 
-    res.status(201).json({
-      status: 'created',
-      message: 'flowchart created successfully',
-      flowchart: newFlowchart,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 'failed',
-      message: error.message,
-      stack: error.stack,
-    });
-  }
+exports.createFlowchart = factory.createOne(Flowchart);
+
+exports.updateUser = async (req, res, next) => {
+  // const { _id: userId } = req.user;
+  req.body.user = req.user._id;
+  next();
 };
 
-exports.getFlowcharts = async (req, res) => {
-  const { userId } = req.params;
-  const queryObj = { ...req.query };
-  try {
-    // QUERY ALL OF A USER
-    const userProfile = await UserProfile.findOne({ user: userId });
-    let flowcharts;
+exports.updateFlowchart = factory.updateOne(Flowchart);
 
-    if (req.query.flow) {
-      // QUERY single flowchart by providing name of the flow in user profile
-      flowcharts = await Flowchart.findOne({ _id: { $in: userProfile.flowcharts }, name: req.query.flow });
-    } else {
-      // query all in user profile
-      flowcharts = await Flowchart.find({ _id: { $in: userProfile.flowcharts } });
-    }
+exports.getAllFlowcharts = factory.getAll(Flowchart);
 
-    res.status(200).json({
-      status: 'success',
-      // results: flowcharts.length,
-      data: {
-        flowcharts,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 'failed',
-      message: error.message,
-      stack: error.stack,
-    });
+exports.getFlowchart = factory.getOne(Flowchart);
+
+exports.deleteFlowchart = factory.deleteOne(Flowchart);
+
+exports.clearUser = async (req, res, next) => {
+  if (!req.deletedDoc) return next(new AppError('Document was not deleted', 500));
+  const deletedFlowchart = req.deletedDoc;
+
+  // check/delete related flowchart
+  let pullFromUser = { flowcharts: deletedFlowchart._id };
+  const relatedBot = deletedFlowchart.bot;
+  if (relatedBot) {
+    const deletedBot = await Bot.findByIdAndDelete(relatedBot);
+    pullFromUser.bots = deletedBot._id;
   }
+  // update user
+  await User.updateMany({ _id: req.user._id }, { $pull: pullFromUser });
+
+  res.status(204).json({
+    status: 'deleted',
+    data: null,
+  });
 };
 
-exports.deleteFlowchart = async (req, res) => {
-  const { userId } = req.params;
-  try {
-    // QUERY ALL OF A USER
-    const userProfile = await UserProfile.findOne({ user: userId });
-    if (!userProfile) res.status(404).json({ status: 'failed', message: 'No user found' });
-    let flowcharts;
-    const deletedFlowchart = await Flowchart.deleteOne({ _id: { $in: userProfile.flowcharts }, _id: req.query.id });
-    await UserProfile.updateOne({ _id: userProfile._id }, { $pull: { flowcharts: deletedFlowchart._id } });
-    res.status(204).json({ message: 'Flowchart deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+// exports.getAllFlowcharts = catchAsync(async (req, res, next) => {
+//   const { _id: userId, flowcharts } = req.user;
+
+//   // QUERY ALL OF A USER
+//   if (flowcharts.length == 0)
+//     return res.status(200).json({
+//       status: 'success',
+//       results: 0,
+//       data: {
+//         flowcharts: null,
+//       },
+//     });
+
+//   let resFlowcharts;
+//   if (req.query.flow) {
+//     // QUERY single flowchart by providing name of the flow in user profile
+//     resFlowcharts = await Flowchart.findOne({ _id: { $in: flowcharts }, name: req.query.flow });
+//   } else {
+//     // query all in user profile
+//     resFlowcharts = await Flowchart.find({ _id: { $in: flowcharts } });
+//   }
+//   const resLength = resFlowcharts.length > 0 ? resFlowcharts.length : 1;
+
+//   res.status(200).json({
+//     status: 'success',
+//     results: resLength,
+//     data: {
+//       flowcharts: resFlowcharts,
+//     },
+//   });
+// });

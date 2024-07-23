@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
+const { LinkedNodes, makeConnectionsObj, generateModel } = require('./generatePromptString');
+
 const Flowchart = require('../flowcharts/flowchartModel');
+const User = require('../users/userModel');
+const catchAsync = require('../utils/catchAsync');
 
 const botSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.ObjectId, ref: 'UserProfile', required: true },
@@ -11,31 +15,45 @@ const botSchema = new mongoose.Schema({
   endPoint: { type: String, default: '' },
   prompt: {
     promptText: { type: String },
-    source: { Flowchart: { type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart', default: null } },
+    source: { type: mongoose.Schema.Types.ObjectId, ref: 'Flowchart', default: null },
   },
 });
+
+// getting saved after flowchart bot request
+// botSchema.pre('save', async function (next) {
+
+// });
+
 botSchema.post('save', async function (doc) {
+  await User.findOneAndUpdate({ _id: doc.user }, { $addToSet: { bots: doc._id } }, { new: true, upsert: true });
+});
+// created when file is imported
+
+botSchema.post('save', async function () {
   console.log('from bot save middleware');
   // if (!doc.isModified('prompt.promptText')) return;
   try {
     const {
-      name,
+      _id,
       user,
+      name,
       modal,
       prompt: { promptText: text },
-    } = doc;
+    } = this;
 
     const data = await fetchModel(name, modal, text, user);
+    if (!data) return new Error('Data not reveived');
+
     console.log('data', data.new_endpoint);
 
-    const updatedBot = await Bot.updateOne({ _id: doc._id }, { $set: { endPoint: data.new_endpoint } });
-
-    // console.log('updatedBot', updatedBot);
+    const bot = await Bot.updateOne({ _id }, { $set: { endPoint: data.new_endpoint } }, { new: true, upsert: true });
+    await User.findOneAndUpdate({ _id: user }, { $addToSet: { bots: _id } }, { new: true, upsert: true });
   } catch (error) {
-    return console.log(error);
+    console.log(error);
   }
 });
 
+// created when flowchart is saved
 botSchema.post('findOneAndUpdate', async function (doc, next) {
   console.log('from bot post middleware');
   if (doc) {
@@ -46,10 +64,10 @@ botSchema.post('findOneAndUpdate', async function (doc, next) {
         modal,
         prompt: { promptText: text },
       } = doc;
-      console.log(name, modal);
+      // console.log(name, modal);
 
       const data = await fetchModel(name, modal, text, user);
-      console.log(data.new_endpoint);
+      // console.log(data.new_endpoint);
       await Bot.updateOne({ _id: doc._id }, { $set: { endPoint: data.new_endpoint } });
     } catch (error) {
       console.log(error);

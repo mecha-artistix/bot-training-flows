@@ -1,72 +1,94 @@
+const { LinkedNodes, makeConnectionsObj, generateModel } = require('./generatePromptString');
+
 const Bot = require('./botModel');
 const UserProfile = require('../userProfile/UserProfileModel');
+const User = require('../users/userModel');
 const Flowchart = require('../flowcharts/flowchartModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const factory = require('../controllers/handlerFactory');
 
-exports.getBots = async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const user = await UserProfile.findOne({ user: userId });
-    if (!userId && !user) return res.status(400).json({ message: 'user not found' });
-    let bots;
-    if (req.query.bot) {
-      bots = await Bot.findOne({ _id: { $in: user.bots }, name: req.query.bot });
-    } else {
-      bots = await Bot.find({ _id: { $in: user.bots } });
-    }
+// exports.getAllBots = catchAsync(async (req, res, next) => {
+//   let bots;
+//   if (req.query.bot) {
+//     bots = await Bot.findOne({ _id: { $in: req.user.bots }, name: req.query.bot });
+//   } else {
+//     bots = await Bot.find({ _id: { $in: req.user.bots } });
+//   }
 
-    const results = bots.length || 0;
+//   const results = bots.length || 0;
 
-    res.status(200).json({
-      status: 'success',
-      results,
-      data: {
-        bots: bots,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 'failed',
-      message: error.messagem,
-      stack: error.stack,
-    });
-  }
-};
+//   res.status(200).json({
+//     status: 'success',
+//     results,
+//     data: {
+//       bots,
+//     },
+//   });
+// });
 
-exports.createBot = async (req, res) => {
-  const { userId } = req.params;
-  try {
-    console.log(userId);
-    const user = await UserProfile.findOne({ user: userId });
-    if (!userId && !user) return res.status(404).json({ message: 'user not found' });
-    const { name, promptText } = req.body;
+exports.generateBot = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+  console.log('flowchartId', req.body.flowchart);
 
-    const newBot = await Bot.create({
-      user: userId,
-      name,
-      prompt: {
-        promptText,
-      },
-    });
+  const flowchartId = req.body.flowchart;
+  // get nodes and edges from flowchart
+  const flowchart = await Flowchart.findById(flowchartId);
+  console.log(flowchart);
+  const { name, nodes, edges } = flowchart;
 
-    await UserProfile.findOneAndUpdate(
-      { user: userId },
-      { $addToSet: { bots: newBot._id } },
-      { new: true, upsert: true }
-    );
+  // generate bot using nodes and edges
+  const promptList = new LinkedNodes();
+  makeConnectionsObj(promptList, nodes, edges);
+  const promptConnectedList = promptList.getTree();
+  const promptText = generateModel(promptConnectedList);
 
-    res.status(201).json({
-      status: 'success',
-      message: 'bot created successfully',
-      bot: newBot,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'failed',
-      message: err.message,
-      stack: err.stack,
-    });
-  }
-};
+  // update bot model
+  const botData = { userId, name, prompt: { promptText, source: flowchartId } };
+  const bot = await Bot.findOneAndUpdate({ user: userId, name }, { $set: botData }, { new: true, upsert: true });
+
+  await flowchart.updateOne({ $set: { bot: bot } });
+
+  // add bot to user
+  await User.findOneAndUpdate({ _id: userId }, { $addToSet: { bots: bot._id } }, { new: true, upsert: true });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: bot,
+    },
+  });
+});
+
+exports.getAllBots = factory.getAll(Bot);
+
+exports.getBot = factory.getOne(Bot);
+
+// exports.createBot = factory.createOne(Bot)
+
+// exports.updateUser = async (req, res, next) => {
+//   // const { _id: userId } = req.user;
+//   req.body.user = req.user._id;
+//   next();
+// };
+
+exports.createBot = catchAsync(async (req, res, next) => {
+  const { name, promptText } = req.body;
+
+  const newBot = await Bot.create({
+    user: req.user._id,
+    name,
+    prompt: {
+      promptText,
+    },
+  });
+
+  res.status(201).json({
+    status: 'success',
+    message: 'bot created successfully',
+    bot: newBot,
+  });
+});
 
 exports.updateBotModal = async (req, res) => {
   const { userId, botId } = req.params;
@@ -93,24 +115,26 @@ exports.updateBotModal = async (req, res) => {
   }
 };
 
-exports.deleteBot = async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const { _id } = req.body;
-    const user = await UserProfile.findOne({ user });
-    if (!user) res.status(404).json({ status: 'failed', message: 'user not found' });
+exports.deleteBot = factory.deleteOne(Bot);
 
-    const deletedBot = await Bot.deleteOne({ _id: { $in: user.bots }, _id });
-    await UserProfile.updateOne({ _id: user._id }, { $pull: { bots: deletedBot._id } });
-    await Flowchart.updateOne({ _id: deletedBot.prompt.source, user: userId }, { $set: { bot: '' } });
-    res.status(204).json({
-      message: 'Bot deleted',
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'failed',
-      message: err.message,
-      stack: err.stack,
-    });
+exports.clearUser = async (req, res, next) => {
+  if (!req.deletedDoc) return next(new AppError('Document was not deleted', 500));
+  const deletedBot = req.deletedDoc;
+
+  console.log('deletedBot.prompt.source->', deletedBot.prompt.source);
+  // check/delete related flowchart
+  let pullFromUser = { bots: deletedBot._id };
+  const relatedFlowchart = deletedBot.prompt.source;
+  if (relatedFlowchart != null) {
+    const deletedFlowchart = await Flowchart.findByIdAndDelete(relatedFlowchart);
+    pullFromUser.flowcharts = deletedFlowchart._id;
   }
+  // update user
+  console.log(pullFromUser);
+  await User.updateMany({ _id: req.user._id }, { $pull: pullFromUser });
+
+  res.status(204).json({
+    status: 'deleted',
+    data: null,
+  });
 };

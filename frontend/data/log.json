@@ -1,0 +1,266 @@
+[
+  {
+    "id": "start_node",
+    "data": {
+      "text": "Start"
+    },
+    "response": {},
+    "positive": [
+      {
+        "id": "node-12",
+        "data": {
+          "label": "",
+          "texts": [
+            "Hi this is Alex, I am calling to share some exciting car insurance opportunities, do you wanna check further."
+          ]
+        },
+        "response": {},
+        "intention": "positive",
+        "positive": [
+          {
+            "id": "node-3",
+            "data": {
+              "label": "",
+              "texts": [
+                "Can you please specify the vehicle type, name and model so that I can assist you better."
+              ]
+            },
+            "response": {
+              "label": "yes",
+              "inputs": ["sure", "why not", "tell me"]
+            },
+            "intention": "positive",
+            "positive": [
+              {
+                "id": "node-5",
+                "data": {
+                  "label": "",
+                  "texts": ["okay, May I know is it registered on your name?"]
+                },
+                "response": {
+                  "label": "yes",
+                  "inputs": ["car, vitz, 2018"]
+                },
+                "intention": "positive",
+                "positive": [
+                  {
+                    "id": "node-10",
+                    "data": {
+                      "label": "",
+                      "texts": [
+                        "I am transferring your call to senior supervisor for better assistance, please hold on."
+                      ]
+                    },
+                    "response": {
+                      "label": "yes yes",
+                      "inputs": ["ofcourse", "yeah"]
+                    },
+                    "intention": "positive",
+                    "positive": [],
+                    "negative": [],
+                    "neutral": []
+                  }
+                ],
+                "negative": [
+                  {
+                    "id": "node-11",
+                    "data": {
+                      "label": "",
+                      "texts": ["Alright, thanks for your time, bye bye."]
+                    },
+                    "response": {
+                      "label": "No",
+                      "inputs": [""]
+                    },
+                    "intention": "negative",
+                    "positive": [],
+                    "negative": [],
+                    "neutral": []
+                  }
+                ],
+                "neutral": []
+              }
+            ],
+            "negative": [
+              {
+                "id": "node-9",
+                "data": {
+                  "label": "",
+                  "texts": [
+                    "I understand your concern, i'll not force you, take care, bye."
+                  ]
+                },
+                "response": {
+                  "label": "I don't wanna share",
+                  "inputs": ["No", ""]
+                },
+                "intention": "negative",
+                "positive": [],
+                "negative": [],
+                "neutral": []
+              }
+            ],
+            "neutral": []
+          }
+        ],
+        "negative": [
+          {
+            "id": "node-4",
+            "data": {
+              "label": "",
+              "texts": ["Alright, thanks for your time, bye bye."]
+            },
+            "response": {
+              "label": "No",
+              "inputs": ["I don't want", "I already have", "Not really"]
+            },
+            "intention": "negative",
+            "positive": [],
+            "negative": [],
+            "neutral": []
+          },
+          {
+            "id": "node-7",
+            "data": {
+              "label": "",
+              "texts": ["i wont take much tim"]
+            },
+            "response": {
+              "label": "if busy",
+              "inputs": [""]
+            },
+            "intention": "negative",
+            "positive": [
+              {
+                "id": "node-8",
+                "data": {
+                  "label": "",
+                  "texts": [
+                    "Can you please specify the vehicle type, name and model so thatI can assist you better."
+                  ]
+                },
+                "response": {
+                  "label": "Positive",
+                  "inputs": [""]
+                },
+                "intention": "positive",
+                "positive": [],
+                "negative": [],
+                "neutral": []
+              }
+            ],
+            "negative": [],
+            "neutral": []
+          }
+        ],
+        "neutral": [
+          {
+            "id": "node-6",
+            "data": {
+              "label": "",
+              "texts": ["You must be happy to listen this."]
+            },
+            "response": {
+              "label": "Neutral",
+              "inputs": [""]
+            },
+            "intention": "neutral",
+            "positive": [
+              {
+                "id": "node-3",
+                "data": {
+                  "label": "",
+                  "texts": [
+                    "Can you please specify the vehicle type, name and model so that I can assist you better."
+                  ]
+                },
+                "response": {
+                  "label": "yes",
+                  "inputs": ["sure", "why not", "tell me"]
+                },
+                "intention": "positive",
+                "positive": [
+                  {
+                    "id": "node-5",
+                    "data": {
+                      "label": "",
+                      "texts": [
+                        "okay, May I know is it registered on your name?"
+                      ]
+                    },
+                    "response": {
+                      "label": "yes",
+                      "inputs": ["car, vitz, 2018"]
+                    },
+                    "intention": "positive",
+                    "positive": [
+                      {
+                        "id": "node-10",
+                        "data": {
+                          "label": "",
+                          "texts": [
+                            "I am transferring your call to senior supervisor for better assistance, please hold on."
+                          ]
+                        },
+                        "response": {
+                          "label": "yes yes",
+                          "inputs": ["ofcourse", "yeah"]
+                        },
+                        "intention": "positive",
+                        "positive": [],
+                        "negative": [],
+                        "neutral": []
+                      }
+                    ],
+                    "negative": [
+                      {
+                        "id": "node-11",
+                        "data": {
+                          "label": "",
+                          "texts": ["Alright, thanks for your time, bye bye."]
+                        },
+                        "response": {
+                          "label": "No",
+                          "inputs": [""]
+                        },
+                        "intention": "negative",
+                        "positive": [],
+                        "negative": [],
+                        "neutral": []
+                      }
+                    ],
+                    "neutral": []
+                  }
+                ],
+                "negative": [
+                  {
+                    "id": "node-9",
+                    "data": {
+                      "label": "",
+                      "texts": [
+                        "I understand your concern, i'll not force you, take care, bye."
+                      ]
+                    },
+                    "response": {
+                      "label": "I don't wanna share",
+                      "inputs": ["No", ""]
+                    },
+                    "intention": "negative",
+                    "positive": [],
+                    "negative": [],
+                    "neutral": []
+                  }
+                ],
+                "neutral": []
+              }
+            ],
+            "negative": [],
+            "neutral": []
+          }
+        ]
+      }
+    ],
+    "negative": [],
+    "neutral": []
+  }
+]

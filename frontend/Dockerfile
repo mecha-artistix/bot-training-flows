@@ -5,15 +5,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json first to leverage Docker cache
-COPY frontend/package.json /app
+COPY package.json package-lock.json /app/
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application
-COPY frontend/ /app/frontend
-
-WORKDIR /app/frontend
+COPY . /app/
 
 # Expose the application port
 EXPOSE 5173

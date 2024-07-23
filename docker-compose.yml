@@ -39,8 +39,6 @@ services:
       - /usr/src/app/node_modules
     ports:
       - '3000:3000'
-    # depends_on:
-    #   - mongo
     env_file:
       - ./nodeJSBackend/.env
 
@@ -49,9 +47,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend/frontend:/app/frontend
+      - ./frontend:/app/
     ports:
       - '5170:5170'
+    env_file:
+      - ./frontend/.env
 # volumes:
 #   postgres_data:
 #   mongo-data:
