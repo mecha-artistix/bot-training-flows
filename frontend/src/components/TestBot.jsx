@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, createContext, useReducer, useContext } fr
 import SendIcon from '../assets/icons/SendIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
 import { useAuth } from '../context/AuthContext';
-import { getBot } from '../utils/fetchBot';
+import { getBot, postBot } from '../utils/fetchBot';
+import Loader from '../assets/loaders/loader';
 
 const ModalContext = createContext();
 
@@ -10,11 +11,13 @@ const initState = {
   name: '',
   botId: null,
   userId: '',
+  flowchartId: null,
+  isLoading: false,
   step: 1,
   model: '',
   api: '',
-  modals: { selected: '', modals: ['llama3', 'Bert', 'Distillbert'] },
-  modalApi: 'http://5.9.96.58:4000/<NAME>/<USERID>',
+  models: { selected: null, models: ['llama3', 'Bert', 'Distillbert'] },
+  modelApi: 'http://5.9.96.58:4000/<NAME>/<USERID>',
   botApi: '',
 };
 
@@ -25,14 +28,18 @@ function reducer(state, action) {
     case 'setBotId':
       console.log(action.payload);
       return { ...state, botId: action.payload };
+    case 'setIsLoading':
+      return { ...state, isLoading: action.payload };
+    case 'setFlowchartId':
+      return { ...state, flowchartId: action.payload };
     case 'setUserId':
       return { ...state, userId: action.payload };
     case 'nextStep':
       return { ...state, step: state.step + 1 };
     case 'prevStep':
       return { ...state, step: state.step - 1 || 1 };
-    case 'setModal':
-      return { ...state, modals: { ...state.modals, selected: action.payload } };
+    case 'setModel':
+      return { ...state, models: { ...state.models, selected: action.payload } };
     default:
       return state;
   }
@@ -47,15 +54,18 @@ const ModalProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    async function getModal() {
-      console.log(state.botId);
-      const model = await getBot(state.botId);
-      console.log(model);
-      const bot = model.data.data;
-      dispatch({ type: 'setName', payload: bot.name });
+    if (!state.name) {
+      async function getModal() {
+        console.log(state.botId);
+        const model = await getBot(state.botId);
+        console.log(model);
+        const bot = model.data.data;
+        dispatch({ type: 'setName', payload: bot.name });
+      }
+      if (state.botId != null) getModal();
     }
-    if (state.botId != null) getModal();
-    console.log(state);
+
+    // console.log(state);
   }, [state.botId]);
 
   const values = { state, dispatch };
@@ -63,20 +73,26 @@ const ModalProvider = ({ children }) => {
   return <ModalContext.Provider value={values}>{children}</ModalContext.Provider>;
 };
 
-export default function TestBot({ closeChat, botId }) {
+export default function TestBot({ closeChat, flowchartId, botId }) {
   return (
     <ModalProvider>
-      <TestBotScreen closeChat={closeChat} botId={botId} />
+      <TestBotScreen closeChat={closeChat} flowchartId={flowchartId} botId={botId} />
     </ModalProvider>
   );
 }
 
-function TestBotScreen({ closeChat, botId }) {
+function TestBotScreen({ closeChat, flowchartId, botId }) {
   const { state, dispatch } = useContext(ModalContext);
   // const { user } = useAuth();
   useEffect(() => {
-    dispatch({ type: 'setBotId', payload: botId });
-  }, [botId]);
+    console.log(botId);
+    if (flowchartId) {
+      dispatch({ type: 'setFlowchartId', payload: flowchartId });
+    } else if (botId) {
+      dispatch({ type: 'setBotId', payload: botId });
+    }
+  }, []);
+  console.log(state);
   const handleCloseChat = () => {
     closeChat();
     console.log('close');
@@ -88,7 +104,7 @@ function TestBotScreen({ closeChat, botId }) {
         <div className="flex items-center justify-between">
           <span onClick={() => dispatch({ type: 'prevStep' })}>back</span>
           <span className="font-bold capitalize text-secondry">
-            Test {state.name}: Modal: {state.modals.selected}
+            Test {state.name}: Modal: {state.models.selected}
           </span>
           <span onClick={handleCloseChat}>
             <CloseIcon />
@@ -108,40 +124,62 @@ function TestBotScreen({ closeChat, botId }) {
 function Step1() {
   const { state, dispatch } = useContext(ModalContext);
   function handleModalSelect(name) {
-    dispatch({ type: 'setModal', payload: name });
-    // PATCH REQUET
-    if (name !== 'llama3') {
-      const updateModalRequest = async () => {
-        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}bots/${state.userId}/${state.botId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-type': 'application/json',
-          },
-          body: JSON.stringify({ modal: name }),
-        });
-        if (!response.ok) throw new Error('response not ok');
-        const responseObj = await response.json();
-        dispatch({ type: 'nextStep' });
-        console.log(responseObj);
-      };
-      updateModalRequest();
-    } else dispatch({ type: 'nextStep' });
+    dispatch({ type: 'setModel', payload: name });
+
+    async function generateBot(flowchartId, model) {
+      dispatch({ type: 'setIsLoading', payload: true });
+      const botData = await postBot(flowchartId, model);
+
+      dispatch({ type: 'setBotId', payload: botData.data.data._id });
+      dispatch({ type: 'setIsLoading', payload: false });
+      dispatch({ type: 'nextStep' });
+    }
+    const porps = {
+      flowchartId: state.flowchartId,
+      botId: state.botId,
+      model: name,
+    };
+    console.log(state);
+    generateBot(porps);
   }
+
+  // useEffect(() => {
+  //   async function generateBot(flowchartId, model) {
+  //     dispatch({ type: 'setIsLoading', payload: true });
+  //     const botData = await postBot(flowchartId, model);
+
+  //     dispatch({ type: 'setBotId', payload: botData.data.data._id });
+  //     dispatch({ type: 'setIsLoading', payload: false });
+  //     dispatch({ type: 'nextStep' });
+  //   }
+  //   const porps = {
+  //     flowchartId: state.flowchartId,
+  //     botId: state.botId,
+  //     model: state.models.selected,
+  //   };
+  //   generateBot(porps);
+  // }, []);
 
   return (
     <div className="pt-5">
       <p className="text-center">Hi! Please choose a model to proceed further.</p>
       <div className="items center mt-5 flex flex-wrap justify-around">
-        {state.modals.modals.map((modal, i) => (
+        {state.models.models.map((model, i) => (
           <button
             key={i}
             className="rounded-full bg-primary px-5 py-1 text-white transition-all hover:bg-secondry_act"
-            onClick={() => handleModalSelect(modal)}
+            onClick={() => handleModalSelect(model)}
           >
-            {modal}
+            {model}
           </button>
         ))}
       </div>
+      {state.isLoading && (
+        <div className="flex flex-col justify-center items-center space-y-3 my-6">
+          <p>Your model is being trained!</p>
+          <Loader />
+        </div>
+      )}
     </div>
   );
 }
@@ -154,7 +192,7 @@ function Step2() {
   const copyApiToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        state.modalApi.replace('<NAME>', state.name).replace('<USERID>', state.userId),
+        state.modelApi.replace('<NAME>', state.name).replace('<USERID>', state.userId),
       ); //'http://5.9.96.58:4000/<NAME>/<USERID>'
       setApiBtnText('Copied!');
       setCopySuccess('API copied to clipboard!');
@@ -164,6 +202,7 @@ function Step2() {
         setCopySuccess('');
       }, 3000);
     } catch (err) {
+      console.log(err);
       setCopySuccess('Failed to copy text.');
     }
   };
@@ -176,7 +215,7 @@ function Step2() {
       <p className="text-center">Modal has been trained</p>
       <div className="items center mt-5 flex flex-wrap justify-around">
         <button className="rounded-full bg-primary px-5 py-1 text-white transition-all hover:bg-secondry_act">
-          {state.modals.selected}
+          {state.models.selected}
         </button>
         <button
           onClick={startChat}

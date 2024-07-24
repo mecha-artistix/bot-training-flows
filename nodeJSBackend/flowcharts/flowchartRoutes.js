@@ -8,13 +8,13 @@ const router = express.Router();
 // .route('/:userId')
 router
   .route('/')
-  .get(authController.protect, flowchartController.getAllFlowcharts)
-  .post(authController.protect, flowchartController.updateUser, flowchartController.createFlowchart);
+  .get(flowchartController.getAllFlowcharts)
+  .post(flowchartController.updateUser, flowchartController.createFlowchart);
 
 router
   .route('/:id')
-  .get(authController.protect, flowchartController.getFlowchart)
-  .patch(authController.protect, flowchartController.updateFlowchart)
-  .delete(authController.protect, flowchartController.deleteFlowchart, flowchartController.clearUser);
+  .get(flowchartController.getFlowchart)
+  .patch(flowchartController.updateFlowchart)
+  .delete(flowchartController.deleteFlowchart, flowchartController.clearUser);
 
 module.exports = router;

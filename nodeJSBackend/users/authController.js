@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const sendEmail = require('../utils/email');
 const crypto = require('crypto');
 
 const signToken = (id) =>

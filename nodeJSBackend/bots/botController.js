@@ -8,49 +8,33 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('../controllers/handlerFactory');
 
-// exports.getAllBots = catchAsync(async (req, res, next) => {
-//   let bots;
-//   if (req.query.bot) {
-//     bots = await Bot.findOne({ _id: { $in: req.user.bots }, name: req.query.bot });
-//   } else {
-//     bots = await Bot.find({ _id: { $in: req.user.bots } });
-//   }
-
-//   const results = bots.length || 0;
-
-//   res.status(200).json({
-//     status: 'success',
-//     results,
-//     data: {
-//       bots,
-//     },
-//   });
-// });
-
 exports.generateBot = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
-  console.log('flowchartId', req.body.flowchart);
+  const { flowchartId, botId } = req.body;
+  console.log('generateBot', req.body);
+  let bot;
+  if (flowchartId !== null) {
+    // get nodes and edges from flowchart
+    const flowchart = await Flowchart.findById(flowchartId);
+    const { name, nodes, edges } = flowchart;
 
-  const flowchartId = req.body.flowchart;
-  // get nodes and edges from flowchart
-  const flowchart = await Flowchart.findById(flowchartId);
-  console.log(flowchart);
-  const { name, nodes, edges } = flowchart;
+    // generate bot using nodes and edges
+    const promptList = new LinkedNodes();
+    makeConnectionsObj(promptList, nodes, edges);
+    const promptConnectedList = promptList.getTree();
+    const promptText = generateModel(promptConnectedList);
 
-  // generate bot using nodes and edges
-  const promptList = new LinkedNodes();
-  makeConnectionsObj(promptList, nodes, edges);
-  const promptConnectedList = promptList.getTree();
-  const promptText = generateModel(promptConnectedList);
+    // update bot model
+    const botData = { userId, name, prompt: { promptText, source: flowchartId } };
+    bot = await Bot.findOneAndUpdate({ user: userId, name }, { $set: botData }, { new: true, upsert: true });
 
-  // update bot model
-  const botData = { userId, name, prompt: { promptText, source: flowchartId } };
-  const bot = await Bot.findOneAndUpdate({ user: userId, name }, { $set: botData }, { new: true, upsert: true });
+    await flowchart.updateOne({ $set: { bot: bot } });
 
-  await flowchart.updateOne({ $set: { bot: bot } });
-
-  // add bot to user
-  await User.findOneAndUpdate({ _id: userId }, { $addToSet: { bots: bot._id } }, { new: true, upsert: true });
+    // add bot to user
+    await User.findOneAndUpdate({ _id: userId }, { $addToSet: { bots: bot._id } }, { new: true, upsert: true });
+  } else if (botId !== null) {
+    bot = await Bot.findById(botId);
+  }
 
   res.status(200).json({
     status: 'success',
@@ -66,11 +50,11 @@ exports.getBot = factory.getOne(Bot);
 
 // exports.createBot = factory.createOne(Bot)
 
-// exports.updateUser = async (req, res, next) => {
-//   // const { _id: userId } = req.user;
-//   req.body.user = req.user._id;
-//   next();
-// };
+exports.updateUser = async (req, res, next) => {
+  // const { _id: userId } = req.user;
+  req.body.user = req.user._id;
+  next();
+};
 
 exports.createBot = catchAsync(async (req, res, next) => {
   const { name, promptText } = req.body;

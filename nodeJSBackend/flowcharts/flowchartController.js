@@ -5,27 +5,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('../controllers/handlerFactory');
 
-// exports.createFlowchart = catchAsync(async (req, res, next) => {
-//   const { _id: userId } = req.user;
-//   // if (flowcharts.length == 0) return next(new AppError('No flowcharts found', 404));
-//   // console.log('userId ', userId);
-//   const { name, nodes, edges } = req.body;
-
-//   // const flowChartData = { name, nodes, edges, user };
-
-//   const newFlowchart = await Flowchart.findOneAndUpdate(
-//     { name, user: userId },
-//     { $set: { name, nodes, edges, user: userId } },
-//     { new: true, upsert: true }
-//   );
-
-//   res.status(201).json({
-//     status: 'created',
-//     message: 'flowchart created successfully',
-//     flowchart: newFlowchart,
-//   });
-// });
-
 exports.createFlowchart = factory.createOne(Flowchart);
 
 exports.updateUser = async (req, res, next) => {
@@ -91,5 +70,26 @@ exports.clearUser = async (req, res, next) => {
 //     data: {
 //       flowcharts: resFlowcharts,
 //     },
+//   });
+// });
+
+// exports.createFlowchart = catchAsync(async (req, res, next) => {
+//   const { _id: userId } = req.user;
+//   // if (flowcharts.length == 0) return next(new AppError('No flowcharts found', 404));
+//   // console.log('userId ', userId);
+//   const { name, nodes, edges } = req.body;
+
+//   // const flowChartData = { name, nodes, edges, user };
+
+//   const newFlowchart = await Flowchart.findOneAndUpdate(
+//     { name, user: userId },
+//     { $set: { name, nodes, edges, user: userId } },
+//     { new: true, upsert: true }
+//   );
+
+//   res.status(201).json({
+//     status: 'created',
+//     message: 'flowchart created successfully',
+//     flowchart: newFlowchart,
 //   });
 // });

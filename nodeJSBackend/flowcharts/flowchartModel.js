@@ -42,6 +42,9 @@ flowChartSchema.post('save', async function (doc) {
   await User.findOneAndUpdate({ _id: doc.user }, { $addToSet: { flowcharts: doc._id } }, { new: true, upsert: true });
 });
 
+const Flowchart = mongoose.model('Flowchart', flowChartSchema);
+module.exports = Flowchart;
+
 // Middleware to fetch the document before update
 
 // flowChartSchema.post('findOneAndUpdate', async function (doc, next) {});
@@ -77,6 +80,3 @@ flowChartSchema.post('save', async function (doc) {
 //   }
 //   next();
 // });
-
-const Flowchart = mongoose.model('Flowchart', flowChartSchema);
-module.exports = Flowchart;

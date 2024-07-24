@@ -31,6 +31,7 @@ function ImportTextFile() {
         // Automatically submit the form after the file is read
         try {
           console.log(fileContent);
+
           const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}bots/`, {
             method: 'POST',
             headers: {

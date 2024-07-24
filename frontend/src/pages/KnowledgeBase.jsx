@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer, useState } from 'react';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import ShareIcon from '../assets/icons/ShareIcon';
@@ -7,7 +7,7 @@ import EditIcon from '../assets/icons/EditIcon';
 import DeleteIcon from '../assets/icons/DeleteIcon';
 import TestBot from '../components/TestBot';
 import { useAuth } from '../context/AuthContext';
-
+import { deleteBot, getAllBots } from '../utils/fetchBot';
 // create context
 
 const BotContext = createContext();
@@ -15,22 +15,28 @@ const BotContext = createContext();
 const initState = {
   columns: ['File Name', 'File Source', 'Created Date'],
   testBot: { isActive: false, name: '', id: null },
+  setPhone: false,
   userId: null,
   bots: [],
-  token: Cookies.get('bearer_token'),
+  selectedBot: null,
+  // token: Cookies.get('bearer_token'),
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'setToken':
-      return { ...state, token: action.payload };
+    case 'setPhone':
+      return { ...state, setPhone: action.payload };
+    case 'setSelectedBot':
+      return { ...state, selectedBot: action.payload };
+    // case 'setToken':
+    //   return { ...state, token: action.payload };
     case 'setUser':
       return { ...state, userId: action.payload };
     case 'testBot':
       // console.log('test action payload:', action.payload);
       return {
         ...state,
-        testBot: { isActive: !state.testBot.isActive, name: action.payload.name, id: action.payload.id },
+        testBot: { isActive: true, name: action.payload.name, id: action.payload.id },
       };
     case 'closeChat':
       return { ...state, testBot: { isActive: false, name: '' } };
@@ -47,29 +53,13 @@ function reducer(state, action) {
 const BotProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initState);
 
-  const { user } = useAuth();
-  const token = Cookies.get('bearer_token');
-  // dispatch({ type: 'setUser', payload: user.userId });
-  // dispatch({ type: 'setToken', payload: token });
-  console.log(state);
   useEffect(() => {
     async function getBots() {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}bots/`, {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer ' + state.token,
-          },
-        });
-        if (!response.ok) throw new Error('Error fetching bots');
-        const responseObj = await response.json();
-        const data = await responseObj.data.data;
-        dispatch({ type: 'setBots', payload: data });
-      } catch (err) {
-        console.log(err);
-      }
+      const botsData = await getAllBots();
+      console.log(botsData);
+      dispatch({ type: 'setBots', payload: botsData.data.data });
     }
-    getBots(token);
+    getBots();
   }, []);
 
   const value = { state, dispatch };
@@ -87,16 +77,17 @@ export default function KnowledgeBase() {
 function KnowledgeBaseTable() {
   const { state, dispatch } = useContext(BotContext);
 
-  function handelTestBots(params) {
-    dispatch({ type: 'testBot' });
-  }
+  // function handelTestBots(params) {
+  //   dispatch({ type: 'testBot' });
+  // }
 
   function handleCloseChat() {
     dispatch({ type: 'closeChat' });
+    // dispatch({ type: 'setPhone', payload: false });
   }
 
   if (!state.bots) return <p>No Bots Found</p>;
-
+  console.log(state.testBot.id);
   return (
     <section className="mx-auto mt-48 flex h-full w-5/6 flex-col">
       <div className="relative w-full overflow-x-auto">
@@ -105,11 +96,9 @@ function KnowledgeBaseTable() {
           <Header />
           <Body />
         </table>
-        <button onClick={handelTestBots}>Tester Bot</button>
+        {/* <button onClick={handelTestBots}>Tester Bot</button> */}
       </div>
-      {state.testBot.isActive && (
-        <TestBot name={state.testBot.name} userId={state.userId} closeChat={handleCloseChat} botId={state.testBot.id} />
-      )}
+      {state.testBot.isActive && <TestBot closeChat={handleCloseChat} botId={state.testBot.id} />}
     </section>
   );
 }
@@ -140,20 +129,12 @@ const BodyRow = ({ bot }) => {
 
   function handleBotClick(name, id) {
     dispatch({ type: 'testBot', payload: { name: name, id: id } });
+    console.log(name, id);
   }
+
   async function handleDelete(id) {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}bots/${id}`, {
-        method: 'DELETE',
-        headers: {
-          authorization: 'Bearer ' + state.token,
-        },
-      });
-      if (!response.ok) throw new Error('Error fetching bots');
-      // dispatch({ type: 'deleteBot', payload: id });
-    } catch (error) {
-      console.log(error);
-    }
+    const data = await deleteBot(id);
+    dispatch({ type: 'deleteBot', payload: id });
   }
 
   return (
@@ -168,7 +149,7 @@ const BodyRow = ({ bot }) => {
         </div>
       </td>
       <td>
-        <Link to={`/create-flowchart?flow=${name}`}> {source}</Link>
+        <Link to={`/create-flowchart?flow=${prompt.source}`}> {source}</Link>
       </td>
       <td>{formatDate(createdAt)}</td>
     </tr>

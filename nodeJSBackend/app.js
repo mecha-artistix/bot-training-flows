@@ -10,6 +10,7 @@ const promptFileRouter = require('./promptFiles/promptFileRoutes');
 const botsRouter = require('./bots/botRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+const authController = require('./users/authController');
 
 const app = express();
 app.use(morgan('dev'));
@@ -31,13 +32,13 @@ app.use('/api/v1/users', userRoutes);
 // app.use('/api/v1/users/profiles', userProfileRouter);
 
 // FlowChart Routes
-app.use('/api/v1/flowcharts', flowchartRouter);
+app.use('/api/v1/flowcharts', authController.protect, flowchartRouter);
 
 // Bots Routs
-app.use('/api/v1/bots', botsRouter);
+app.use('/api/v1/bots', authController.protect, botsRouter);
 
 // PROMPT FILE ROUTES
-app.use('/api/v1/promptfiles', promptFileRouter);
+// app.use('/api/v1/promptfiles', promptFileRouter);
 
 // RESPONE FOR HOME LINK
 app.get('/', (req, res) => {

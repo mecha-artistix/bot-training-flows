@@ -9,6 +9,7 @@ import { postFlowchart, createFlowchart, updateFlowchart } from '../utils/fetchF
 import TestBot from './TestBot';
 import Cookies from 'js-cookie';
 import { postBot } from '../utils/fetchBot';
+import Loader from '../assets/loaders/loader';
 // import ModelPrompt from "./ModelPrompt";
 function DrawingControlsPanel() {
   const token = Cookies.get('bearer_token');
@@ -57,12 +58,10 @@ function DrawingControlsPanel() {
     // const flowchartId = flowchartData.data.data._id;
     // console.log(flowchartId);
     // await postBot(id,token,body);
-    const botBody = JSON.stringify({ flowchart: flowchartId });
-    const botData = await postBot(botBody);
+    // const botData = await postBot(flowchartId);
     // console.log('botData', botData);
-    setBotId(() => botData.data.data._id);
+    // setBotId(() => botData.data.data._id);
     setPhone((phone) => true);
-    // console.log(botId);
   }
   function handleCloseChat() {
     setPhone((phone) => false);
@@ -82,7 +81,7 @@ function DrawingControlsPanel() {
 
   return (
     <>
-      {phone && <TestBot closeChat={handleCloseChat} botId={botId} />}
+      {phone && <TestBot closeChat={handleCloseChat} flowchartId={flowchartId} />}
       <div className="flex w-full justify-between p-2">
         <span className="flex flex-col">
           <CreateNewFlow />
