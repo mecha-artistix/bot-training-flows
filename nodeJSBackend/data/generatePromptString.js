@@ -190,7 +190,6 @@ async function fetchFlowchartData() {
     const connectedList = list.getTree();
     // console.log(connectedList);
     const prompt = generateModel(connectedList);
-    console.log(prompt);
   } catch (err) {
     console.error('Failed to fetch flowchart:', err);
     throw err; // Propagate the error if needed

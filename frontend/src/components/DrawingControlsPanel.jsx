@@ -21,6 +21,8 @@ function DrawingControlsPanel() {
   const [phone, setPhone] = useState(false);
   const promptRef = useRef(null);
   const flowchartId = useQuery().get('flow');
+  // const flowchartId = '669fea9bd66520db5d0060c8';
+  console.log(flowchartId);
   // const userID = localStorage.getItem('userID');
   const [botId, setBotId] = useState('');
   useEffect(() => {
@@ -55,12 +57,7 @@ function DrawingControlsPanel() {
       edges: edges,
     });
     const flowchartData = await updateFlowchart(flowchartId, flowchartBody);
-    // const flowchartId = flowchartData.data.data._id;
-    // console.log(flowchartId);
-    // await postBot(id,token,body);
-    // const botData = await postBot(flowchartId);
-    // console.log('botData', botData);
-    // setBotId(() => botData.data.data._id);
+
     setPhone((phone) => true);
   }
   function handleCloseChat() {

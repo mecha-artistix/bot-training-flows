@@ -18,7 +18,14 @@ app.use(morgan('dev'));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-app.use(cors());
+
+const corsOptions = {
+  origin: 'http://localhost:5170',
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // app.use(bodyParser.json());

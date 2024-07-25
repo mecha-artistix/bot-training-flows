@@ -68,11 +68,8 @@ exports.getOne = (Model, popOptions) =>
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     const modelArrName = Model.modelName.toLowerCase() + 's';
-    console.log(modelArrName);
     let filter = { _id: { $in: req.user[modelArrName] } };
-    console.log(filter);
-    // if(req.user.bots)
-    // if (req.params.tourId) filter = { tour: req.params.tourId };
+    // console.log(filter);
     // EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query).filter().sort().limitFields().paginate();
 

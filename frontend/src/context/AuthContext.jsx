@@ -1,28 +1,21 @@
 import { useEffect, useState, createContext, useContext, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import verifyToken from './verifyToken';
 import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 const USERS_API = import.meta.env.VITE_NODE_BASE_API + 'users';
-// const USERS_API = process.env.REACT_APP_API_URL;
 
-// const initState = { status: true, username: 'huzaifa' };
 const initState = { isAuthenticated: false, username: null, userId: null };
-// Cookies.set('token', action.token, { expires: action.rememberMe ? 7 : undefined }
 function reducer(state, action) {
   switch (action.type) {
     case 'success':
-      console.log('payload', action.payload);
-      Cookies.set('bearer_token', action.payload.token);
+      console.log(document.Cookies);
       return { ...state, isAuthenticated: true, username: action.payload.username, userId: action.payload.userId };
     case 'failed':
       return initState;
     case 'varified':
       return { ...state, isAuthenticated: true, username: action.payload.username, userId: action.payload.userId };
     case 'logout':
-      localStorage.clear();
-      Cookies.remove('bearer_token');
       return initState;
     default:
       state;
@@ -31,7 +24,6 @@ function reducer(state, action) {
 
 export function AuthProvider({ children }) {
   const [user, dispatch] = useReducer(reducer, initState);
-  const token = Cookies.get('bearer_token');
 
   // Login
   const login = async (creds) => {
@@ -42,18 +34,17 @@ export function AuthProvider({ children }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(creds),
+        credentials: 'include',
       });
-      if (!response.ok) throw new Error('response not ok');
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'response not ok');
       const user = data.data.user;
       if (response.status === 200) {
-        console.log(data);
-        dispatch({ type: 'success', payload: { token: data.token, username: user.username, userId: user._id } });
-      } else {
-        throw new Error(data.message);
+        dispatch({ type: 'success', payload: { username: user.username, userId: user._id } });
+        return { status: response.status };
       }
     } catch (error) {
-      console.error('Failed to log in:', error);
+      return { message: error.message };
     }
   };
   // Register
@@ -70,7 +61,7 @@ export function AuthProvider({ children }) {
       const user = await data.data.user;
       console.log(data);
       if (response.status === 201) {
-        dispatch({ type: 'success', payload: { username: user.username, token: data.token } });
+        dispatch({ type: 'success', payload: { username: user.username } });
       } else {
         throw new Error(data.message);
       }
@@ -78,39 +69,52 @@ export function AuthProvider({ children }) {
       console.error('Failed to create: ', error);
     }
   };
-
+  const authenticate = (username, userId) => {
+    dispatch({ type: 'success', payload: { username: username, userId: userId } });
+  };
   // VERIFY TOKE
 
-  useEffect(() => {
-    const verifyToken = async function (token) {
-      try {
-        const response = await fetch(USERS_API + '/verify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
-        });
-        const data = await response.json();
-        // console.log(data);
-        const user = data.user;
-        if (data.valid) {
-          dispatch({ type: 'success', payload: { username: user.username, userId: user._id, token: token } });
-        }
-        return response.data.user;
-      } catch (error) {
-        return false;
+  const verifyToken = async function () {
+    try {
+      const response = await fetch(USERS_API + '/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const data = await response.json();
+      const user = data.user;
+      if (data.valid) {
+        dispatch({ type: 'success', payload: { username: user.username, userId: user._id } });
       }
-    };
-    verifyToken(token);
+      return response.data.user;
+    } catch (error) {
+      return false;
+    }
+  };
+  useEffect(() => {
+    verifyToken();
   }, []);
 
   // LOGOUT
-  const logout = () => {
-    dispatch({ type: 'logout' });
+  const logout = async () => {
+    try {
+      const response = await fetch(USERS_API + '/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error(response);
+      dispatch({ type: 'logout' });
+    } catch (error) {
+      return error;
+    }
   };
 
-  const value = { login, logout, register, user }; // , user, logout
+  const value = { login, logout, register, user, verifyToken, authenticate }; // , user, logout
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

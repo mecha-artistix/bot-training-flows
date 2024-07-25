@@ -1,15 +1,12 @@
-import Cookies from 'js-cookie';
-const token = Cookies.get('bearer_token');
-
 export const postFlowchart = async function (body) {
   try {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/`, {
       method: 'POST',
       headers: {
-        authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
       body: body,
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while posting');
     const data = await response.json();
@@ -24,10 +21,10 @@ export const createFlowchart = async function (body) {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/`, {
       method: 'POST',
       headers: {
-        authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
       body: body,
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while posting');
     const data = await response.json();
@@ -42,10 +39,10 @@ export const updateFlowchart = async function (id, body) {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${id}`, {
       method: 'PATCH',
       headers: {
-        authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
       body,
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while posting');
     const data = await response.json();
@@ -59,9 +56,8 @@ export const fetchFlowcharts = async function () {
   try {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/`, {
       method: 'GET',
-      headers: {
-        authorization: 'Bearer ' + token,
-      },
+
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while fetching');
     const data = await response.json();
@@ -75,9 +71,8 @@ export const getFlowchart = async function (id) {
   try {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${id}`, {
       method: 'GET',
-      headers: {
-        authorization: 'Bearer ' + token,
-      },
+
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while fetching');
     const data = await response.json();
@@ -91,9 +86,8 @@ export const fetchDeleteFlowchart = async function (id) {
   try {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/${id}`, {
       method: 'DELETE',
-      headers: {
-        authorization: 'Bearer ' + token,
-      },
+
+      credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while making request');
     const isDeleted = response.status === 204;

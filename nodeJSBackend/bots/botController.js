@@ -11,7 +11,6 @@ const factory = require('../controllers/handlerFactory');
 exports.generateBot = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const { flowchartId, botId } = req.body;
-  console.log('generateBot', req.body);
   let bot;
   if (flowchartId !== null) {
     // get nodes and edges from flowchart
@@ -105,7 +104,6 @@ exports.clearUser = async (req, res, next) => {
   if (!req.deletedDoc) return next(new AppError('Document was not deleted', 500));
   const deletedBot = req.deletedDoc;
 
-  console.log('deletedBot.prompt.source->', deletedBot.prompt.source);
   // check/delete related flowchart
   let pullFromUser = { bots: deletedBot._id };
   const relatedFlowchart = deletedBot.prompt.source;
@@ -114,7 +112,6 @@ exports.clearUser = async (req, res, next) => {
     pullFromUser.flowcharts = deletedFlowchart._id;
   }
   // update user
-  console.log(pullFromUser);
   await User.updateMany({ _id: req.user._id }, { $pull: pullFromUser });
 
   res.status(204).json({

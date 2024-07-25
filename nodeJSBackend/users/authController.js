@@ -60,9 +60,14 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = catchAsync((req, res, next) => {
+  res.clearCookie('jwt', { path: '/' }); // Clear the cookie
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
 exports.verify = catchAsync(async (req, res, next) => {
-  const token = req.body.token;
-  console.log(token);
+  let token = req.headers.cookie.split('jwt=')[1];
+  if (!token) return next(new AppError('token not found', 401));
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   const user = await User.findById(decoded.id);
   if (!user) return next(new AppError('user not found', 401));
@@ -70,12 +75,13 @@ exports.verify = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
+  console.log(req.headers.cookie);
   // 1) Get the token
   let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-  if (!token) return next(new AppError('You are not logged in', 401));
+
+  if (req.headers.cookie && req.headers.cookie.startsWith('jwt=')) {
+    token = req.headers.cookie.split('jwt=')[1];
+  } else return next(new AppError('You are not logged in', 401));
   // 2) token varification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   //   console.log(decoded);
@@ -103,6 +109,8 @@ exports.restrictTo = (...roles) => {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1)  get user based on posted email
+  //http://localhost:5170/bot-training-flows/forget-password/resetPassword/0da2f15bb55d11b6e560814e2a72602eb68fcc70a8c2062cd80be3c90097de6c
+  console.log(req.get('origin'));
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) return next(new AppError('user not found', 404));
@@ -110,8 +118,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
   // 3) send back token as email
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-  const message = `Forgot your password? Submit a patch request with your new password and password confirm to: ${resetURL}.\nIf you did not request a password reset please ignore this email`;
+  // const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+  const resetURL = `${req.get('origin')}/bot-training-flows/forget-password/resetPassword/${resetToken}`;
+  console.log(resetURL);
+  const message = `<h4>Forgot your password? Submit a patch request with your new password and password confirm to: ${resetURL} .\nIf you did not request a password reset please ignore this email</h4>`;
 
   try {
     await sendEmail({

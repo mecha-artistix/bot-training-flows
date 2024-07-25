@@ -14,6 +14,7 @@ import Leads from './pages/Leads';
 import Bots from './pages/Bots';
 import { useEffect } from 'react';
 import SecondryNavigation from './components/SecondryNavigation';
+import PasswordReset, { ConfirmPassword, EnterEmail } from './authentication/PasswordReset';
 
 const register_path = '/sign-in';
 const singIn_path = 'sign-in';
@@ -26,6 +27,10 @@ function App() {
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
           <Routes>
+            <Route path="forget-password" element={<PasswordReset />}>
+              <Route index element={<EnterEmail />} />
+              <Route path="resetPassword/:id" element={<ConfirmPassword />} />
+            </Route>
             <Route path={singIn_path} element={<UserLoginRegister />}>
               <Route index element={<LoginForm />} />
               <Route path="register" element={<RegisterForm />} />
@@ -40,7 +45,6 @@ function App() {
 
 function AuthenticatedApp() {
   const { user } = useAuth();
-  console.log(user);
   // if (!isAuthenticated) return <Navigate to={singIn_path} />;
   if (!user.isAuthenticated) return <Navigate to={singIn_path} />;
 

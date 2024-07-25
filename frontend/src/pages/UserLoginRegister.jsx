@@ -19,7 +19,9 @@ function UserLoginRegister() {
 
         <section className="flex w-1/2 flex-1 flex-col items-center space-y-8">
           <div className="flex flex-col items-center">
-            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-3xl text-primary">Creative Bot</h2>
+            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-3xl text-primary">
+              {import.meta.env.VITE_SITE_NAME}
+            </h2>
             <p className="tracking-[.6rem] text-accent">24/7 at Your Service!</p>
           </div>
           <img src={loginPageImage} className="hidden w-2/3 sm:block" loading="lazy" />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { forgotPassword } from './resetPassword';
 
 function LoginForm() {
   const { login, user } = useAuth();
@@ -25,14 +26,23 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await login(creds);
-      if (!user.isAuthenticated) {
-        setError('Invalid username or password');
-      }
-    } catch (error) {
-      setError('Login failed. Please try again later.');
+
+    const response = await login(creds);
+    console.log(response);
+    if (response.status == 200) {
+      console.log(response);
+      setError('user confirmed');
+    } else {
+      setError(response.message || 'Login failed. Please try again later.');
+      console.log(response);
     }
+  };
+
+  const resetPassowrd = async (e) => {
+    e.preventDefault();
+    console.log('forget password');
+    const data = await forgotPassword('huzaifa@huzaifa.com');
+    console.log(data);
   };
 
   return (
@@ -80,7 +90,8 @@ function LoginForm() {
             <input type="checkbox" id="" />
             <p>Remember me</p>
           </span>
-          <p>Forgot Password?</p>
+          <Link to={`/forget-password`}>Forgot Password?</Link>
+          {/* <button onClick={resetPassowrd}>Forgot Password?</button> */}
         </div>
         <input className="cwu_form_btn" type="submit" value="Sign In" />
       </form>

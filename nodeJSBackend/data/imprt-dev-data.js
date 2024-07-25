@@ -25,7 +25,6 @@ const importUsers = async () => {
 const deleteUsers = async () => {
   try {
     await UserAuth.deleteMany();
-    console.log('user auth deleted');
     process.exit();
   } catch (err) {
     console.log(err);

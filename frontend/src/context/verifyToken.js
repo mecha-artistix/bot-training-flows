@@ -1,17 +1,18 @@
 const USERS_API = import.meta.env.VITE_NODE_BASE_API + 'users';
-async function verifyToken(token) {
+async function verifyToken() {
   try {
     const response = await fetch(USERS_API + '/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(token),
+      credentials: 'include',
     });
+    if (!response.ok) throw new error(response);
     const resData = await response.json();
-    return response.data.user;
+    return resData.data.user;
   } catch (error) {
-    return false;
+    return error;
   }
 }
 export default verifyToken;

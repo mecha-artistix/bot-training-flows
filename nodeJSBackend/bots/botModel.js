@@ -44,8 +44,6 @@ botSchema.post('save', async function () {
     const data = await fetchModel(name, modal, text, user);
     if (!data) return new Error('Data not reveived');
 
-    console.log('data', data.new_endpoint);
-
     const bot = await Bot.updateOne({ _id }, { $set: { endPoint: data.new_endpoint } }, { new: true, upsert: true });
     await User.findOneAndUpdate({ _id: user }, { $addToSet: { bots: _id } }, { new: true, upsert: true });
   } catch (error) {
@@ -55,7 +53,6 @@ botSchema.post('save', async function () {
 
 // created when flowchart is saved
 botSchema.post('findOneAndUpdate', async function (doc, next) {
-  console.log('from bot post middleware');
   if (doc) {
     try {
       const {
@@ -92,7 +89,6 @@ async function fetchModel(name, modal, text, user) {
     if (!response.ok) return new Error();
 
     const data = await response.json();
-    console.log('data', data.new_endpoint);
 
     return data;
   } catch (error) {
