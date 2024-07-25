@@ -19,9 +19,17 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+const allowedOrigins = ['http://localhost:5170', 'http://91.107.194.217:5170'];
+
 const corsOptions = {
-  origin: 'http://localhost:5170',
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
