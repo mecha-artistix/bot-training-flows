@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { EdgeLabelRenderer, getSmoothStepPath, useStore } from 'reactflow';
 import { getEdgeParams } from '../../utils/getNodeIntersections';
 import adjustPath from '../../utils/adjustPath';
@@ -9,7 +9,6 @@ function Step_labelled_path({ id, source, sourceX, sourceY, target, style, marke
   const [isExpanded, setIsExpanded] = useState(false);
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
-
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -23,6 +22,7 @@ function Step_labelled_path({ id, source, sourceX, sourceY, target, style, marke
   const handleExpanded = () => {
     setIsExpanded((isExpanded) => !isExpanded);
   };
+
   const handleLabel = (e) => {
     setLabel(e.target.value);
   };
@@ -37,6 +37,7 @@ function Step_labelled_path({ id, source, sourceX, sourceY, target, style, marke
       newInputs.splice(index, 1);
     });
   };
+
   useEffect(() => {
     data.label = label;
   }, [label, data]);
@@ -60,11 +61,12 @@ function Step_labelled_path({ id, source, sourceX, sourceY, target, style, marke
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             pointerEvents: 'all',
           }}
-          className="nodrag nopan border bg-cwu_brown p-2"
+          className="nodrag nopan border bg-slate-100 p-2 rounded border-secondry"
         >
+          <div className="text-xs font-bold text-center mb-2">{label} User Input</div>
           <input className="text-xs" value={label} onChange={(e) => handleLabel(e)}></input>
           <div>
-            <button className="text-pink bg-primary rounded-sm px-1 text-xs text-white" onClick={handleExpanded}>
+            <button className="text-pink bg-secondry rounded-sm px-1 text-xs text-white" onClick={handleExpanded}>
               Add More
             </button>
             {isExpanded && (
@@ -77,7 +79,9 @@ function Step_labelled_path({ id, source, sourceX, sourceY, target, style, marke
   );
 }
 
-function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
+function PathInputs({ setInputs, inputs, handleAdd, setIsExpanded }) {
+  const expandedRef = useRef(null);
+
   const handleAddInput = (index) => {
     setInputs((prevInputs) => [...prevInputs, '']);
   };
@@ -92,12 +96,20 @@ function PathInputs({ setInputs, inputs, isExpanded, handleAdd }) {
     });
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (expandedRef.current && !expandedRef.current.contains(event.target)) {
+        setIsExpanded(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
-    <div
-      className={`absolute z-40 animate-slideDown rounded border border-black bg-white p-2 ${
-        isExpanded ? 'animate-slideDown' : 'animate-slideUp'
-      }`}
-    >
+    <div ref={expandedRef} className={`absolute z-40 animate-slideDown rounded border border-black p-2 `}>
       <div>
         {inputs.map((value, index) => {
           return (

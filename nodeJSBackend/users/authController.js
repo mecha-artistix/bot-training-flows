@@ -17,7 +17,9 @@ const createSendToken = (user, statusCode, res) => {
   // send token as cookie to server
   const cookieOptions = {
     espires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-    httpOnly: true,
+    httpOnly: false,
+    sameSite: 'Lax',
+    secure: false,
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
@@ -34,7 +36,7 @@ const createSendToken = (user, statusCode, res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   // const newUser = await User.create(req.body);
   const newUser = await User.create({
-    name: req.body.name,
+    firstName: req.body.firstName,
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
@@ -66,6 +68,7 @@ exports.logout = catchAsync((req, res, next) => {
 });
 
 exports.verify = catchAsync(async (req, res, next) => {
+  if (!req.headers.cookie) return next(new AppError('token not found', 401));
   let token = req.headers.cookie.split('jwt=')[1];
   if (!token) return next(new AppError('token not found', 401));
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -74,14 +77,30 @@ exports.verify = catchAsync(async (req, res, next) => {
   res.status(200).json({ valid: true, user });
 });
 
+function getJwtFromCookie(cookieHeader) {
+  if (!cookieHeader) return null;
+
+  const jwtPrefix = 'jwt=';
+  const startIdx = cookieHeader.indexOf(jwtPrefix);
+
+  if (startIdx === -1) return null;
+
+  const endIdx = cookieHeader.indexOf(';', startIdx);
+
+  return endIdx === -1
+    ? cookieHeader.substring(startIdx + jwtPrefix.length)
+    : cookieHeader.substring(startIdx + jwtPrefix.length, endIdx);
+}
+
 exports.protect = catchAsync(async (req, res, next) => {
   console.log(req.headers.cookie);
   // 1) Get the token
   let token;
-
-  if (req.headers.cookie && req.headers.cookie.startsWith('jwt=')) {
-    token = req.headers.cookie.split('jwt=')[1];
+  if (req.headers.cookie) {
+    token = getJwtFromCookie(req.headers.cookie);
+    if (!token) return next(new AppError('You are not logged in', 401));
   } else return next(new AppError('You are not logged in', 401));
+
   // 2) token varification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   //   console.log(decoded);
@@ -145,7 +164,7 @@ exports.resetPassword = async (req, res, next) => {
   // 1)  Get user based on the token
   // reset token  in url is non enc unlike db where we have encrypted
   const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-  console.log(hashedToken);
+  // console.log(hashedToken);
   const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() } });
 
   if (!user) return next(new AppError('token is invalid or has expired', 400));
@@ -164,7 +183,9 @@ exports.resetPassword = async (req, res, next) => {
 // update password for logged in users
 exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1> get user from collection
+
   const user = await User.findById(req.user.id).select('+password');
+  console.log(user);
   // we will have the user from protect middle ware that we passed to this route right before the controller
   // const user = req.user;
   // 2> check if posted password is correct

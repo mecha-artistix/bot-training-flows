@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-const allowedOrigins = ['http://localhost:5170', 'http://91.107.194.217:5170'];
+const allowedOrigins = ['http://localhost:5173', 'http://91.107.194.217:5170', 'http://172.31.149.141:5173'];
 
 const corsOptions = {
   origin: (origin, callback) => {

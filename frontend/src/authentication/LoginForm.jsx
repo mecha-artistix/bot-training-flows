@@ -9,16 +9,10 @@ function LoginForm() {
 
   const [creds, setCreds] = useState({
     email: 'huzaifa@huzaifa.com',
-    password: 'huzaifa1234',
+    password: 'huzaifa12345',
   });
   let loginCreds;
   const [error, setError] = useState();
-
-  useEffect(() => {
-    if (user.isAuthenticated) {
-      navigate(`/`);
-    }
-  }, [user, navigate]);
 
   function handleChange(e) {
     setCreds({ ...creds, [e.target.name]: e.target.value });
@@ -28,21 +22,12 @@ function LoginForm() {
     e.preventDefault();
 
     const response = await login(creds);
-    console.log(response);
     if (response.status == 200) {
-      console.log(response);
+      navigate(`/`);
       setError('user confirmed');
     } else {
       setError(response.message || 'Login failed. Please try again later.');
-      console.log(response);
     }
-  };
-
-  const resetPassowrd = async (e) => {
-    e.preventDefault();
-    console.log('forget password');
-    const data = await forgotPassword('huzaifa@huzaifa.com');
-    console.log(data);
   };
 
   return (

@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Use Node.js LTS as the base image
-FROM node:18-alpine
+FROM node:18-slim
 
 # Create and set the working directory
 WORKDIR /usr/src/app
@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --verbose
 
 # Copy the application code
 COPY . .

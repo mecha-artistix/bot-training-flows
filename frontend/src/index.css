@@ -27,6 +27,15 @@
   .leftbar_nav a:hover {
     @apply text-accent;
   }
+  .account-settings-nav li {
+    @apply flex-1 p-2 flex justify-center;
+  }
+  /* .account-settings-nav li a {
+    @apply text-center w-full;
+  } */
+  .account-settings-nav li:has(> a.active) {
+    @apply bg-primary font-extrabold text-white;
+  }
   a {
     @apply cursor-pointer hover:underline;
   }
@@ -45,6 +54,10 @@
   th,
   td {
     @apply border-collapse border px-1 py-2 first:w-2/4;
+  }
+  nav,
+  nav a {
+    @apply flex space-x-2 w-full;
   }
   nav ul li {
     @apply flex space-x-3;
@@ -67,5 +80,18 @@
   }
   .testBotIcons {
     @apply size-6 cursor-pointer text-secondry;
+  }
+  .profile_form input,
+  .profile_form select {
+    @apply flex-1 outline-none border border-theme_grey rounded px-2 py-1;
+  }
+  .profile_form label {
+    @apply flex-1;
+  }
+  .profile_form .form-field {
+    @apply flex justify-between;
+  }
+  .profile_form .icon-span {
+    @apply flex-1 ml-auto text-right;
   }
 }

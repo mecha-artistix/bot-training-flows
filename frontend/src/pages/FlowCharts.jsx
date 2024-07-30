@@ -90,8 +90,8 @@ const BodyRow = ({ flowchart, handleDelete }) => {
   async function handleDeleteCall(id) {
     // const isDeleted = await fetchDeleteFlowchart(token, id);
     console.log(token);
-    await fetchDeleteFlowchart(id);
-    // if (isDeleted) return handleDelete(id);
+    const deleted = await fetchDeleteFlowchart(id);
+    if (deleted.isDeleted) return handleDelete(id);
   }
 
   return (

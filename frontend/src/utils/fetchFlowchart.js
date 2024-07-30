@@ -56,7 +56,6 @@ export const fetchFlowcharts = async function () {
   try {
     const response = await fetch(`${import.meta.env.VITE_NODE_BASE_API}flowcharts/`, {
       method: 'GET',
-
       credentials: 'include',
     });
     if (!response.ok) return new Error('error occured while fetching');

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, Link, useLocation } from 'react-router-dom';
 import loginPageImage from '../assets/images/login_page_image.png';
+import { useAuth } from '../context/AuthContext';
 function UserLoginRegister() {
   const [isUser, setIsUser] = useState(false);
-
+  const { user } = useAuth();
   let location = useLocation();
   location = location.pathname;
   const path = {
@@ -12,6 +13,7 @@ function UserLoginRegister() {
     signUp: 'register',
   };
   path.current = location.slice(location.lastIndexOf('/') + 1);
+
   return (
     <>
       <section className="container mx-auto flex min-h-screen flex-row flex-wrap items-center justify-around space-x-3.5">

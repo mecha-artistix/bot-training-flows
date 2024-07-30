@@ -7,7 +7,7 @@ function RegisterForm() {
   const navigate = useNavigate();
 
   const [creds, setCreds] = useState({
-    name: '',
+    firstName: '',
     lastName: '',
     username: '',
     email: '',
@@ -51,9 +51,9 @@ function RegisterForm() {
             }`}
             type="text"
             id="firstName"
-            name="name"
+            name="firstName"
             placeholder="First Name"
-            value={creds.name}
+            value={creds.firstName}
             onChange={handleChange}
           />
         </div>

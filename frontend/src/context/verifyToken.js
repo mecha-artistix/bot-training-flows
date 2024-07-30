@@ -9,8 +9,8 @@ async function verifyToken() {
       credentials: 'include',
     });
     if (!response.ok) throw new error(response);
-    const resData = await response.json();
-    return resData.data.user;
+    const data = await response.json();
+    return data.user;
   } catch (error) {
     return error;
   }

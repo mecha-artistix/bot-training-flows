@@ -22,7 +22,6 @@ function DrawingControlsPanel() {
   const promptRef = useRef(null);
   const flowchartId = useQuery().get('flow');
   // const flowchartId = '669fea9bd66520db5d0060c8';
-  console.log(flowchartId);
   // const userID = localStorage.getItem('userID');
   const [botId, setBotId] = useState('');
   useEffect(() => {

@@ -16,7 +16,7 @@ function Header() {
 
   function handleSignOut() {
     logout();
-    // navigate(`/sign-in`);
+    navigate(`/sign-in`);
   }
   return (
     <div className="flex items-center justify-between border-b-2 border-primary px-2 py-2">
@@ -36,16 +36,16 @@ function Header() {
           <nav>
             <ul className="flex flex-col space-y-2">
               <li>
-                <span>
+                <Link to={'/user-profile/account-settings'}>
                   <UserProfileIcon />
-                </span>
-                <p>Profile</p>
+                  Profile
+                </Link>
               </li>
-              <li onClick={handleSignOut}>
-                <span>
+              <li>
+                <a onClick={handleSignOut}>
                   <Logout />
-                </span>
-                <p>Sign Out</p>
+                  Sign Out
+                </a>
               </li>
             </ul>
           </nav>

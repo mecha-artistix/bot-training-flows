@@ -43,26 +43,20 @@ function LeftPanel() {
       </nav>
       <div className="mb-14 mt-auto border-t border-t-primary text-center">
         <nav>
-          <ul className="flex flex-col space-y-2 text-white last:pt-3">
+          <ul className="flex flex-col space-y-3 text-white last:pt-3">
             {popup && (
               <>
                 <li>
-                  <span>
-                    <AccountSettingIcon />
-                  </span>
-                  <p>Account Settings</p>
+                  <AccountSettingIcon />
+                  <NavLink to={'/user-profile/account-settings'}>Account Settings</NavLink>
                 </li>
                 <li>
-                  <span>
-                    <SecuritySettingsIcon />
-                  </span>
-                  <p>Security Settings</p>
+                  <SecuritySettingsIcon />
+                  <NavLink to={'/user-profile/security-settings'}>Security Settings</NavLink>
                 </li>
                 <li>
-                  <span>
-                    <PaymentIcon />
-                  </span>
-                  <p>Payment Settings</p>
+                  <PaymentIcon />
+                  <NavLink to={'/user-profile/payment-settings'}>Payment Settings</NavLink>
                 </li>
               </>
             )}
@@ -71,7 +65,9 @@ function LeftPanel() {
               <span>
                 <GearIcon />
               </span>
-              <p className="text-lg capitalize text-white">Settings</p>
+              <NavLink to={`/user-profile`} className="text-lg capitalize text-white">
+                Settings
+              </NavLink>
             </li>
           </ul>
         </nav>

@@ -10,8 +10,8 @@ function ActionNode({ data }) {
   // }
   //   useEffect(() => {}, [text, data]);
   return (
-    <div className="text-primary rounded-full bg-cwu_brown px-10 py-1">
-      <p className="text-primary font-bold">{text}</p>
+    <div className=" rounded-full bg-primary px-10 py-1">
+      <p className="text-white font-bold">{text}</p>
       <Handle
         id="g"
         // style={{ ...style, top: "70%", backgroundColor: "blue" }}

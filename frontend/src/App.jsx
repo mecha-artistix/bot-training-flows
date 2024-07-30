@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import UserLoginRegister from './pages/UserLoginRegister';
@@ -15,38 +15,70 @@ import Bots from './pages/Bots';
 import { useEffect } from 'react';
 import SecondryNavigation from './components/SecondryNavigation';
 import PasswordReset, { ConfirmPassword, EnterEmail } from './authentication/PasswordReset';
+import UserProfileSettings from './pages/userProfile/UserProfileSettings';
+import AccountSettings from './pages/userProfile/AccountSettings';
+import SecuritySettings from './pages/userProfile/SecuritySettings';
+import PaymentSettings from './pages/userProfile/PaymentSettings';
+import verifyToken from './context/verifyToken';
 
 const register_path = '/sign-in';
 const singIn_path = 'sign-in';
 const singUp_path = 'register';
+
 function App() {
-  const { user } = useAuth();
+  const { user, verifyToken, dispatch } = useAuth();
+
+  useEffect(() => {
+    async function verify() {
+      // console.log('verif');
+      if (!Cookies.get('jwt')) {
+        return 'fail';
+      }
+      const data = await verifyToken();
+      if (data.status === 'fail') {
+        return 'fail';
+      }
+      dispatch({ type: 'login', payload: { username: data.user.username, userId: data.user._id } });
+    }
+    verify();
+  }, []);
 
   return (
     <>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <AuthProvider>
-          <Routes>
-            <Route path="forget-password" element={<PasswordReset />}>
-              <Route index element={<EnterEmail />} />
-              <Route path="resetPassword/:id" element={<ConfirmPassword />} />
-            </Route>
-            <Route path={singIn_path} element={<UserLoginRegister />}>
-              <Route index element={<LoginForm />} />
-              <Route path="register" element={<RegisterForm />} />
-            </Route>
-            <Route path="*" element={<AuthenticatedApp />} />
-          </Routes>
-        </AuthProvider>
+        <Routes>
+          <Route path="forget-password" element={<PasswordReset />}>
+            <Route index element={<EnterEmail />} />
+            <Route path="resetPassword/:id" element={<ConfirmPassword />} />
+          </Route>
+          <Route path={singIn_path} element={<UserLoginRegister />}>
+            <Route index element={<LoginForm />} />
+            <Route path="register" element={<RegisterForm />} />
+          </Route>
+          <Route path="*" element={<AuthenticatedApp />} />
+        </Routes>
       </BrowserRouter>
     </>
   );
 }
 
 function AuthenticatedApp() {
-  const { user } = useAuth();
-  // if (!isAuthenticated) return <Navigate to={singIn_path} />;
-  if (!user.isAuthenticated) return <Navigate to={singIn_path} />;
+  const { user, verifyToken, dispatch } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Function to execute on route change
+    const handleRouteChange = async () => {
+      const data = await verifyToken();
+      if (!data) {
+        dispatch({ type: 'logout' });
+        navigate(singIn_path);
+      }
+    };
+
+    handleRouteChange();
+  }, [location]);
 
   return (
     <>
@@ -59,12 +91,17 @@ function AuthenticatedApp() {
 
           <section className="flex flex-grow flex-col px-2 py-2">
             <Routes>
-              {/* <Route path={`/`} element={<UserSpecificRoutes />} /> */}
               <Route index element={<FlowCharts />} />
               <Route path="create-flowchart" element={<FlowChartBoard />} />
               <Route path="knowledgebase" element={<KnowledgeBase />} />
               <Route path="bots" element={<Bots />} />
               <Route path="leads" element={<Leads />} />
+              <Route path="user-profile" element={<UserProfileSettings />}>
+                <Route index element={<AccountSettings />} />
+                <Route path="account-settings" element={<AccountSettings />} />
+                <Route path="security-settings" element={<SecuritySettings />} />
+                <Route path="payment-settings" element={<PaymentSettings />} />
+              </Route>
             </Routes>
           </section>
         </main>
