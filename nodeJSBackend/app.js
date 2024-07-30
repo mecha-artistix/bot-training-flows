@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'development') {
 const allowedOrigins = [
   'http://localhost:5173',
   'http://91.107.194.217:5170',
-  'http://91.107.194.217:5173/',
+  'http://91.107.194.217:5173',
   'http://172.31.149.141:5173',
 ];
 
