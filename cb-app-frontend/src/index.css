@@ -1,0 +1,100 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* global.css */
+
+@font-face {
+  font-family: 'PressStart2P-Regular';
+  src: local('PressStart2P-Regular'), url('./assets/fonts/PressStart2P-Regular.ttf'), format('truetype');
+}
+
+@layer components {
+  /* #root {
+    @apply mx-auto w-[1280px];
+  } */
+  .cwu_form_btn {
+    @apply w-full cursor-pointer rounded bg-secondry py-3 text-white transition-all hover:bg-secondry_act;
+  }
+  .cwu_magent_btn {
+    @apply cursor-pointer rounded bg-secondry px-3 py-2 text-white;
+  }
+  .cwu_accent_btn {
+    @apply rounded bg-accent px-3 py-2 text-base font-semibold;
+  }
+  .leftbar_nav a.active,
+  .leftbar_nav a:hover {
+    @apply text-accent;
+  }
+  .account-settings-nav li {
+    @apply flex-1 p-2 flex justify-center;
+  }
+  /* .account-settings-nav li a {
+    @apply text-center w-full;
+  } */
+  .account-settings-nav li:has(> a.active) {
+    @apply bg-primary font-extrabold text-white;
+  }
+  a {
+    @apply cursor-pointer hover:underline;
+  }
+  table {
+    @apply w-full text-left text-sm text-gray-900 rtl:text-right;
+  }
+  thead {
+    @apply bg-gray-100 text-xs uppercase text-gray-700;
+  }
+  tr {
+    @apply hover:bg-gray-50;
+  }
+  tr a {
+    @apply text-secondry;
+  }
+  th,
+  td {
+    @apply border-collapse border px-1 py-2 first:w-2/4;
+  }
+  nav,
+  nav a {
+    @apply flex space-x-2 w-full;
+  }
+  nav ul li {
+    @apply flex space-x-3;
+  }
+
+  .gray_icon {
+    @apply cursor-pointer text-neutral-500;
+  }
+  .nav-icon {
+    @apply size-6 cursor-pointer text-accent;
+  }
+  .header-icon {
+    @apply size-6 cursor-pointer text-secondry;
+  }
+  .flowchart-icons {
+    @apply size-6 cursor-pointer text-secondry;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    @apply hidden;
+  }
+  .testBotIcons {
+    @apply size-6 cursor-pointer text-secondry;
+  }
+  .profile_form input,
+  .profile_form select {
+    @apply flex-1 outline-none border border-theme_grey rounded px-2 py-1;
+  }
+  .profile_form label {
+    @apply flex-1;
+  }
+  .profile_form .form-field {
+    @apply flex justify-between items-center;
+  }
+  .profile_form .form-field > * {
+    @apply flex-1;
+  }
+  .profile_form .icon-span > * {
+    @apply flex-1 mx-auto text-center;
+  }
+}

@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   },
   username: { type: String, required: [true, 'Please provide a username'] },
 
-  // image: '',
+  photo: { type: String, default: 'default.jpg' },
 
   dateOfBirth: { type: Date },
   gender: { type: String },
