@@ -12,6 +12,7 @@ const botsRouter = require('./bots/botRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const authController = require('./users/authController');
+const intentRoutes = require('./intents/intentsRoutes');
 
 const app = express();
 app.use(morgan('dev'));
@@ -54,6 +55,9 @@ app.use('/api/v1/flowcharts', authController.protect, flowchartRouter);
 
 // Bots Routs
 app.use('/api/v1/bots', authController.protect, botsRouter);
+
+// Intent Routes
+app.use('/api/bot', intentRoutes);
 
 // RESPONE FOR HOME LINK
 app.get('/', (req, res) => {
