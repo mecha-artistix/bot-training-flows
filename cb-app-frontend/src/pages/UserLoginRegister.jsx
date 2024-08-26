@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, Link, useLocation } from 'react-router-dom';
-import loginPageImage from '../assets/images/login_page_image.png';
+import loginPageImage from '../assets/images/login_page_img.svg';
 import { useAuth } from '../context/AuthContext';
 function UserLoginRegister() {
   const [isUser, setIsUser] = useState(false);
@@ -21,10 +21,8 @@ function UserLoginRegister() {
 
         <section className="flex w-1/2 flex-1 flex-col items-center space-y-8">
           <div className="flex flex-col items-center">
-            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-3xl text-primary">
-              {import.meta.env.VITE_SITE_NAME}
-            </h2>
-            <p className="tracking-[.6rem] text-accent">24/7 at Your Service!</p>
+            <h2 className="mb-1 flex h-2/5 items-center font-theme_logo text-3xl ">{import.meta.env.VITE_SITE_NAME}</h2>
+            <p className="tracking-[.6rem] text-primary">24/7 at Your Service!</p>
           </div>
           <img src={loginPageImage} className="hidden w-2/3 sm:block" loading="lazy" />
         </section>

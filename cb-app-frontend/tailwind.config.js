@@ -7,11 +7,17 @@ export default {
         theme_logo: ['PressStart2P-Regular'],
       },
       colors: {
-        primary: 'rgba(95, 74, 140, 1)',
-        secondry: 'rgba(40, 17, 89, 1)', // rgba(28, 119, 246, 1)
+        primary: '#0d47a1',
+        primary_hover: '#1976d2',
+        secondry: '#0d47a1', // rgba(28, 119, 246, 1)
         secondry_act: 'rgba(40, 17, 89, .85)', // rgba(28, 119, 246, 1)
-        accent: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
+        accent: '#1976d2', // rgba(28, 119, 246, 1)
         theme_grey: 'rgba(217,217,217,1)',
+        // primary: 'rgba(95, 74, 140, 1)',
+        // secondry: 'rgba(40, 17, 89, 1)', // rgba(28, 119, 246, 1)
+        // secondry_act: 'rgba(40, 17, 89, .85)', // rgba(28, 119, 246, 1)
+        // accent: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
+        // theme_grey: 'rgba(217,217,217,1)',
         // cwu_theme_orng: 'rgba(191, 170, 107, 1)', // rgba(28, 119, 246, 1)
         // cwu_theme_orng_hover: 'rgba(28, 119, 246, 0.8)',
         // cwu_theme_orng_magenta: 'rgba(95, 74, 140, 1)', //rgba(63, 62, 79, 1)

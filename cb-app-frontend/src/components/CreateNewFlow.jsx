@@ -34,9 +34,9 @@ function CreateNewFlow() {
         Create New Flow<span className="text-lg text-accent">+</span>
       </button>
       {popup && (
-        <div className="absolute left-0 top-0 z-50 flex translate-y-10 bg-theme_grey px-10 py-10">
+        <div className="absolute left-0 top-0 z-50 flex translate-y-10 bg-white px-10 py-10 border shadow-lg">
           <input
-            className="w-60 p-2"
+            className="w-60 p-2 border-2"
             type="text"
             placeholder="Set Flow Name"
             value={flowName}

@@ -62,7 +62,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.logout = catchAsync((req, res, next) => {
+exports.logout = catchAsync(async (req, res, next) => {
   res.clearCookie('jwt', { path: '/' }); // Clear the cookie
   res.status(200).json({ message: 'Logged out successfully' });
 });

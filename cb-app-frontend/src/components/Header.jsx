@@ -30,7 +30,7 @@ function Header() {
   }, [user]);
 
   return (
-    <div className="flex items-center justify-between border-b-2 border-primary px-2 py-2">
+    <div className="flex items-center justify-between border-b px-2 py-2">
       <div className="relative flex space-x-1 p-0">
         <HomeIcon />
         <button>Home</button>

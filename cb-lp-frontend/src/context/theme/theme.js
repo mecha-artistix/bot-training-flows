@@ -1,6 +1,6 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import { adjustOpacity } from '../../utils/adjustOpacity';
-
+import { blue, grey, amber } from '@mui/material/colors';
 const baseConfig = {
   typography: {
     h1: {
@@ -198,10 +198,11 @@ export const createAppTheme = (mode) =>
             },
             contained: {
               boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-              backgroundColor: mode == 'dark' ? baseConfig.palette.accent.main : baseConfig.palette.accent.dark, //
-              color: mode === 'dark' ? '#190000' : '#190000',
+              // backgroundColor: mode == 'dark' ? baseConfig.palette.accent.main : baseConfig.palette.accent.dark, //
+              backgroundColor: mode == 'dark' ? blue[400] : blue[800], //
+              color: mode === 'dark' ? '#fff' : '#fff',
               '&:hover': {
-                backgroundColor: mode == 'dark' ? baseConfig.palette.accent.dark : baseConfig.palette.accent.main,
+                backgroundColor: mode == 'dark' ? blue[500] : blue[700],
               },
             },
             outlined: {

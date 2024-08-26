@@ -15,13 +15,13 @@
     @apply mx-auto w-[1280px];
   } */
   .cwu_form_btn {
-    @apply w-full cursor-pointer rounded bg-secondry py-3 text-white transition-all hover:bg-secondry_act;
+    @apply w-full cursor-pointer rounded bg-primary py-3 text-white transition-all hover:bg-primary_hover;
   }
   .cwu_magent_btn {
     @apply cursor-pointer rounded bg-secondry px-3 py-2 text-white;
   }
   .cwu_accent_btn {
-    @apply rounded bg-accent px-3 py-2 text-base font-semibold;
+    @apply rounded bg-primary px-3 py-2 text-base font-semibold text-white;
   }
   .leftbar_nav a.active,
   .leftbar_nav a:hover {
@@ -34,7 +34,7 @@
     @apply text-center w-full;
   } */
   .account-settings-nav li:has(> a.active) {
-    @apply bg-primary font-extrabold text-white;
+    @apply bg-[#64b5f6] font-bold text-black;
   }
   a {
     @apply cursor-pointer hover:underline;
@@ -67,13 +67,22 @@
     @apply cursor-pointer text-neutral-500;
   }
   .nav-icon {
-    @apply size-6 cursor-pointer text-accent;
+    @apply size-6 cursor-pointer;
+  }
+  .nav-icon g path,
+  .nav-icon path {
+    @apply fill-current text-primary;
   }
   .header-icon {
-    @apply size-6 cursor-pointer text-secondry;
+    @apply size-6 cursor-pointer;
   }
+  .header-icon g path,
+  .header-icon path {
+    @apply fill-current text-primary;
+  }
+
   .flowchart-icons {
-    @apply size-6 cursor-pointer text-secondry;
+    @apply size-6 cursor-pointer text-primary;
   }
   .scrollbar-none::-webkit-scrollbar {
     @apply hidden;

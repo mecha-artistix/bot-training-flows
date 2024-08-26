@@ -216,6 +216,7 @@ function FlowBoard() {
         onEdgeClick={onElementClick}
         elementsSelectable={true}
         connectionLineComponent={FloatingConnectionLine}
+        colorMode={'dark'}
       >
         <Background />
       </ReactFlow>

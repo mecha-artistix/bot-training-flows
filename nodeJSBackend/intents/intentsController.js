@@ -3,11 +3,10 @@ const Intent = require('./intentsModel');
 
 exports.createIntent = catchAsync(async (req, res, next) => {
   const doc = await Intent.create(req.body);
-
   res.status(201).json({
     status: 'success',
     data: {
-      intent: doc,
+      data: doc,
     },
   });
 });
