@@ -1,2 +1,3 @@
 **/.env
 docker-compose copy.yml
+docker-compose

@@ -3,7 +3,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
-const USERS_API = import.meta.env.VITE_NODE_BASE_API + 'users';
+// const USERS_API = import.meta.env.VITE_NODE_BASE_API + 'users';
+const USERS_API = 'http://172.31.149.141:3001/api/v1/users';
 
 const initState = { isAuthenticated: false, username: null, userId: null };
 
@@ -74,10 +75,10 @@ export function AuthProvider({ children }) {
   // VERIFY TOKE
 
   const verifyToken = async function () {
-    if (!Cookies.get('jwt')) {
-      console.log('no jwt');
-      return false;
-    }
+    // if (!Cookies.get('jwt')) {
+    //   console.log('no jwt');
+    //   return false;
+    // }
     try {
       const response = await fetch(USERS_API + '/verify', {
         method: 'POST',

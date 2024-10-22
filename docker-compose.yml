@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./nodeJSBackend:/usr/src/app
-      - ./nodeJSBackend/public:/usr/src/app/public
+      - /app/public
     ports:
-      - '3000:3000'
+      - '3001:3001'
     env_file:
       - ./nodeJSBackend/.env
 
@@ -19,7 +19,7 @@ services:
       - ./cb-app-frontend:/app/
       - /app/node_modules
     ports:
-      - '5173:5173'
+      - '5175:5175'
     env_file:
       - ./cb-app-frontend/.env
 

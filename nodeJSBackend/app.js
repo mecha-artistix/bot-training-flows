@@ -21,16 +21,17 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://91.107.194.217:5170',
-  'http://91.107.194.217:5173',
-  'http://172.31.149.141:5173',
-];
+const ALLOWED_ORIGINS = ['127.0.0.1', 'localhost', '91.107.194.217', '172.31.149.141', '209.209.42.134'];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
+    if (
+      !origin ||
+      ALLOWED_ORIGINS.some((allowedOrigin) => {
+        const { hostname } = new URL(origin);
+        return allowedOrigin === hostname;
+      })
+    ) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
